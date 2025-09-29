@@ -4,6 +4,7 @@ import newsbot.console.ConsoleAdapter;
 import  newsbot.engine.DialogueService;
 import newsbot.engine.DialogueEngine;
 import newsbot.news.NewsPreference;
+import newsbot.news.NewsPreferenceService;
 import newsbot.repository.memory.InMemorySessionRepository;
 import newsbot.repository.memory.InMemoryUserProfileRepository;
 
@@ -11,7 +12,7 @@ import newsbot.repository.memory.InMemoryUserProfileRepository;
 public class ConsoleApp {
     public static void main(String[] args) {
         DialogueEngine engine = new DialogueEngine();
-        NewsPreference newsPrefs = new NewsPreference(new InMemoryUserProfileRepository());
+        NewsPreferenceService newsPrefs = new NewsPreferenceService(new InMemoryUserProfileRepository());
 
         DialogueService dialogueService = new DialogueService(engine, new InMemorySessionRepository(), newsPrefs);
 
