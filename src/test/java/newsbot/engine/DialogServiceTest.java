@@ -43,7 +43,7 @@ class DialogServiceTest {
         // user2 — независимая сессия/профиль
         svc.handle("u2", ""); // start
         String list2 = svc.handle("u2", "\\news list");
-        assertEquals("Ваши категории: []", list2);
+        assertEquals("Ваши категории: ", list2);
     }
 
     @Test

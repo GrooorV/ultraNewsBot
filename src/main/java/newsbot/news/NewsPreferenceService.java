@@ -5,7 +5,7 @@ import newsbot.repository.UserProfileRepository;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
+
 
 public class NewsPreferenceService {
     private final UserProfileRepository repo;
@@ -25,7 +25,11 @@ public class NewsPreferenceService {
 
     public String list(UserId user) {
         Set<NewsCategory> set = repo.getCategories(user);
-        return set.stream().map(NewsCategory::toString).collect(Collectors.toList()).toString();
+        String lst = "";
+        for (NewsCategory cat : set) {
+            lst += cat.name();
+        }
+        return lst;
     }
 
     public void add(UserId user, String cat) {
@@ -37,9 +41,10 @@ public class NewsPreferenceService {
     }
 
     public String available() {
-        return availableCategories.stream()
-                .map(NewsCategory::toString)
-                .collect(Collectors.toList())
-                .toString();
+        String categories = "";
+        for (NewsCategory category : availableCategories) {
+            categories += category.name() + " ";
+        }
+        return categories;
     }
 }

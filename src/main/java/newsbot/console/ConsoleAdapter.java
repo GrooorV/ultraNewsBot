@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 
 public class ConsoleAdapter {
-    private DialogueService dialog;
+    private final DialogueService dialog;
 
     public ConsoleAdapter(DialogueService dialog) {
         this.dialog = dialog;
