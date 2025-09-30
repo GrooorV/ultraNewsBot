@@ -1,6 +1,6 @@
 package newsbot.engine;
 
-import newsbot.news.NewsPreference;
+
 import newsbot.news.NewsPreferenceService;
 import newsbot.repository.SessionRepository;
 import newsbot.shared.UserId;

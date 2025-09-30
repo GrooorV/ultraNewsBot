@@ -14,11 +14,11 @@ public class NewsPreference {
 
     public String list(UserId user) {
         Set<NewsCategory> set = repo.getCategories(user);
-        String lst = "";
+        StringBuilder lst = new StringBuilder();
         for (NewsCategory cat : set) {
-            lst += cat.name();
+            lst.append(cat.name());
         }
-        return lst;
+        return lst.toString();
     }
 
     public void add(UserId user, String cat) {

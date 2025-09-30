@@ -25,11 +25,11 @@ public class NewsPreferenceService {
 
     public String list(UserId user) {
         Set<NewsCategory> set = repo.getCategories(user);
-        String lst = "";
+        StringBuilder lst = new StringBuilder();
         for (NewsCategory cat : set) {
-            lst += cat.name();
+            lst.append(cat.name());
         }
-        return lst;
+        return lst.toString();
     }
 
     public void add(UserId user, String cat) {
@@ -41,10 +41,10 @@ public class NewsPreferenceService {
     }
 
     public String available() {
-        String categories = "";
+        StringBuilder categories = new StringBuilder();
         for (NewsCategory category : availableCategories) {
-            categories += category.name() + " ";
+            categories.append(category.name()).append(" ");
         }
-        return categories;
+        return categories.toString();
     }
 }
