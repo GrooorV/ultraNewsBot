@@ -3,7 +3,6 @@ package newsbot.app;
 import newsbot.console.ConsoleAdapter;
 import  newsbot.engine.DialogueService;
 import newsbot.engine.DialogueEngine;
-import newsbot.news.NewsPreference;
 import newsbot.news.NewsPreferenceService;
 import newsbot.repository.memory.InMemorySessionRepository;
 import newsbot.repository.memory.InMemoryUserProfileRepository;
