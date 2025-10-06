@@ -3,7 +3,7 @@ package newsbot.news;
 import java.util.Objects;
 
 public class NewsCategory {
-    private String name;
+    private final String name;
 
     public NewsCategory(String name) {
         this.name = Objects.requireNonNull(name);

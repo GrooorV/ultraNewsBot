@@ -1,6 +1,6 @@
 package newsbot.engine;
 
-import newsbot.news.NewsPreference;
+
 import newsbot.news.NewsPreferenceService;
 import newsbot.repository.SessionRepository;
 import newsbot.shared.UserId;
@@ -9,9 +9,9 @@ import java.util.Arrays;
 
 
 public class DialogueService {
-    private DialogueEngine engine;
-    private SessionRepository sessions;
-    private NewsPreferenceService newsPrefs;
+    private final DialogueEngine engine;
+    private final SessionRepository sessions;
+    private final NewsPreferenceService newsPrefs;
 
 
     public  DialogueService(DialogueEngine engine, SessionRepository sessions, NewsPreferenceService newsPrefs) {
