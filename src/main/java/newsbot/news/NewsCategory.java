@@ -21,8 +21,8 @@ public enum NewsCategory {
     public static Optional<NewsCategory> parse(String s) {
         if (s == null) return Optional.empty();
         String norm = normalize(s);
-        for (NewsCategory c : values()) {
-            if (normalize(c.name).equals(norm)) return Optional.of(c);
+        for (NewsCategory category : values()) {
+            if (normalize(category.name).equals(norm)) return Optional.of(category);
         }
         return Optional.empty();
     }

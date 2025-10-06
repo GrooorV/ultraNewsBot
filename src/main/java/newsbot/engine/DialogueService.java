@@ -48,10 +48,10 @@ public class DialogueService {
 
         // Интерпретация свободного текста как списка категорий
         if (engine.looksLikeCategoryInput(rawInput)) {
-            String[] cats = Arrays.stream(rawInput.split("[,;]"))
+            String[] strCategories = Arrays.stream(rawInput.split("[,;]"))
                     .map(String::trim).filter(s -> !s.isBlank()).toArray(String[]::new);
-            for (String c : cats) newsPrefs.add(userId, c);
-            return "Запомнил категории: " + String.join(", ", cats) +
+            for (String c : strCategories) newsPrefs.add(userId, c);
+            return "Запомнил категории: " + String.join(", ", strCategories) +
                     ". Ваши категории сейчас: " + newsPrefs.list(userId) +
                     ". Можете добавить ещё или используйте \\news list.";
         }

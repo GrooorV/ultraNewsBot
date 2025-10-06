@@ -8,11 +8,11 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class InMemoryUserProfileRepository implements UserProfileRepository {
-    private final ConcurrentHashMap<String, Set<NewsCategory>> cats = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Set<NewsCategory>> categories = new ConcurrentHashMap<>();
 
     @Override
     public Set<NewsCategory> getCategories(UserId userId) {
-        Set<NewsCategory> set = cats.get(userId.getValue());
+        Set<NewsCategory> set = categories.get(userId.getValue());
         return (set == null) ? Set.of() : Set.copyOf(set);
     }
 
@@ -20,7 +20,7 @@ public class InMemoryUserProfileRepository implements UserProfileRepository {
     public void addCategory(UserId userId, NewsCategory category) {
         String key = userId.getValue();
 
-        cats.computeIfAbsent(key, ignored -> EnumSet.noneOf(NewsCategory.class)).add(category);
+        categories.computeIfAbsent(key, ignored -> EnumSet.noneOf(NewsCategory.class)).add(category);
     }
 
     @Override
@@ -28,7 +28,7 @@ public class InMemoryUserProfileRepository implements UserProfileRepository {
          String key = userId.getValue();
 
 
-        cats.computeIfPresent(key, (ignored, set) -> {
+        categories.computeIfPresent(key, (ignored, set) -> {
             set.remove(category);
             return set.isEmpty() ? null : set;
         });

@@ -21,19 +21,19 @@ public class NewsPreferenceService {
         }
 
         StringBuilder lst = new StringBuilder();
-        for (NewsCategory cat : set) {
-            lst.append(cat.getName()).append(" ");
+        for (NewsCategory category : set) {
+            lst.append(category.getName()).append(" ");
         }
         return lst.toString();
     }
 
-    public void add(UserId user, String cat) {
+    public void add(UserId user, String categoryName) {
 
-        NewsCategory.parse(cat).ifPresent(repoCat -> repo.addCategory(user, repoCat));
+        NewsCategory.parse(categoryName).ifPresent(repoCategory -> repo.addCategory(user, repoCategory));
     }
 
-    public void remove(UserId user, String cat) {
-        NewsCategory.parse(cat).ifPresent(repoCat -> repo.removeCategory(user, repoCat));
+    public void remove(UserId user, String categoryName) {
+        NewsCategory.parse(categoryName).ifPresent(repoCategory -> repo.removeCategory(user, repoCategory));
     }
 
     public String available() {
