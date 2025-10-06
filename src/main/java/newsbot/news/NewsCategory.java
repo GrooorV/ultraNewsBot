@@ -1,15 +1,34 @@
 package newsbot.news;
 
 import java.util.Objects;
+import java.util.Optional;
 
-public class NewsCategory {
+public enum NewsCategory {
+    SPORT("спорт"),
+    ECONOMY("экономика"),
+    TECHNOLOGY("технологии"),
+    POLITICS("политика"),
+    CULTURE("культура");
+
+
     private final String name;
 
-    public NewsCategory(String name) {
+    NewsCategory(String name) {
         this.name = Objects.requireNonNull(name);
     }
+    public String getName() {return name;}
 
-    public String name() {
-        return name;
+    public static Optional<NewsCategory> parse(String s) {
+        if (s == null) return Optional.empty();
+        String norm = normalize(s);
+        for (NewsCategory c : values()) {
+            if (normalize(c.name).equals(norm)) return Optional.of(c);
+        }
+        return Optional.empty();
+    }
+
+
+    private static String normalize(String s) {
+        return s.trim().toLowerCase();
     }
 }

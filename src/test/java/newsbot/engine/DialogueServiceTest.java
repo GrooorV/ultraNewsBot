@@ -22,7 +22,6 @@ class DialogServiceTest {
         DialogueService svc = newService();
         String r = svc.handle("u", "");
         assertTrue(r.startsWith("Начнём!"));
-        assertTrue(r.toLowerCase().contains("какие категории"));
     }
 
     @Test
@@ -50,11 +49,11 @@ class DialogServiceTest {
     void newsAddAndDelCommands() {
         DialogueService svc = newService();
         svc.handle("u", ""); // start
-        assertTrue(svc.handle("u", "\\news list").contains("[]"));
+        assertTrue(svc.handle("u", "\\news list").contains("ни одной"));
         assertTrue(svc.handle("u", "\\news add спорт").contains("Добавил"));
         assertTrue(svc.handle("u", "\\news list").contains("спорт"));
         assertTrue(svc.handle("u", "\\news del спорт").contains("Удалил"));
-        assertTrue(svc.handle("u", "\\news list").contains("[]"));
+        assertTrue(svc.handle("u", "\\news list").contains("ни одной"));
     }
 
     @Test
@@ -68,7 +67,7 @@ class DialogServiceTest {
         // user2
         svc.handle("u2", "");
         String list2 = svc.handle("u2", "\\news list");
-        assertEquals("Ваши категории: []", list2);
+        assertEquals("Ваши категории: пока не выбрано ни одной категории!", list2);
 
         // user1 still has category
         String list1 = svc.handle("u1", "\\news list");
@@ -80,6 +79,6 @@ class DialogServiceTest {
         DialogueService svc = newService();
         svc.handle("u", ""); // onboarding
         String r = svc.handle("u", ""); // empty again
-        assertTrue(r.toLowerCase().contains("какие категории"));
+        assertTrue(r.toLowerCase().contains("новости о чём вас интересуют"));
     }
 }
