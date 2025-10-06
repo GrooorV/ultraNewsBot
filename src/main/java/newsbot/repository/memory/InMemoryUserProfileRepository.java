@@ -20,7 +20,7 @@ public class InMemoryUserProfileRepository implements UserProfileRepository {
     public void addCategory(UserId userId, NewsCategory category) {
         String key = userId.getValue();
 
-        cats.computeIfAbsent(key, _ -> EnumSet.noneOf(NewsCategory.class)).add(category);
+        cats.computeIfAbsent(key, ignored -> EnumSet.noneOf(NewsCategory.class)).add(category);
     }
 
     @Override
@@ -28,7 +28,7 @@ public class InMemoryUserProfileRepository implements UserProfileRepository {
          String key = userId.getValue();
 
 
-        cats.computeIfPresent(key, (_, set) -> {
+        cats.computeIfPresent(key, (ignored, set) -> {
             set.remove(category);
             return set.isEmpty() ? null : set;
         });
