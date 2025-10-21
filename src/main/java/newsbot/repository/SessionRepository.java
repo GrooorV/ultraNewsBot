@@ -1,9 +1,9 @@
 package newsbot.repository;
 
-import newsbot.engine.UserSession;
+import newsbot.engine.Session;
 import newsbot.shared.UserId;
 
 public interface SessionRepository {
-    UserSession getOrCreate(UserId userId);
-    void save(UserId userId, UserSession session);
+    Session getOrCreate(UserId userId);
+    void save(UserId userId, Session session);
 }

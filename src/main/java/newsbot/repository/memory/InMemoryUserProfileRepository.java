@@ -20,7 +20,7 @@ public class InMemoryUserProfileRepository implements UserProfileRepository {
     public void addCategory(UserId userId, NewsCategory category) {
         String key = userId.getValue();
 
-        categories.computeIfAbsent(key, ignored -> EnumSet.noneOf(NewsCategory.class)).add(category);
+        categories.computeIfAbsent(key, _ -> EnumSet.noneOf(NewsCategory.class)).add(category);
     }
 
     @Override

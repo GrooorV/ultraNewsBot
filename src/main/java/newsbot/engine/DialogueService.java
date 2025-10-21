@@ -22,7 +22,7 @@ public class DialogueService {
 
     public String handle(String rawUserId, String rawInput) {
         UserId userId = new UserId(rawUserId);
-        UserSession session = sessions.getOrCreate(userId);
+        Session session = sessions.getOrCreate(userId);
 
         // Справка
         if (engine.isHelp(rawInput)) {
@@ -47,7 +47,7 @@ public class DialogueService {
         }
 
         // Интерпретация свободного текста как списка категорий
-        if (engine.looksLikeCategoryInput(rawInput)) {
+        if (engine.isLikeCategoryInput(rawInput)) {
             String[] strCategories = Arrays.stream(rawInput.split("[,;]"))
                     .map(String::trim).filter(s -> !s.isBlank()).toArray(String[]::new);
             for (String c : strCategories) newsPrefs.add(userId, c);

@@ -2,22 +2,22 @@ package newsbot.repository.memory;
 
 import newsbot.repository.SessionRepository;
 import newsbot.shared.UserId;
-import newsbot.engine.UserSession;
+import newsbot.engine.Session;
 
 
 import java.util.concurrent.ConcurrentHashMap;
 
 
 public class InMemorySessionRepository implements SessionRepository {
-    private final ConcurrentHashMap<String, UserSession> map = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Session> map = new ConcurrentHashMap<>();
 
     @Override
-    public UserSession getOrCreate(UserId userId) {
-        return map.computeIfAbsent(userId.getValue(), k -> new UserSession());
+    public Session getOrCreate(UserId userId) {
+        return map.computeIfAbsent(userId.getValue(), _ -> new Session());
     }
 
     @Override
-    public void save(UserId userId, UserSession userSession) {
-        map.put(userId.getValue(), userSession);
+    public void save(UserId userId, Session session) {
+        map.put(userId.getValue(), session);
     }
 }

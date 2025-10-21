@@ -25,12 +25,12 @@ class DialogueEngineTest {
     }
 
     @Test
-    void looksLikeCategoryInputHeuristics() {
+    void isLikeCategoryInputHeuristics() {
         DialogueEngine e = new DialogueEngine();
-        assertTrue(e.looksLikeCategoryInput("спорт, экономика"));
-        assertTrue(e.looksLikeCategoryInput("технологии"));
-        assertFalse(e.looksLikeCategoryInput("\\news add спорт"));
-        assertFalse(e.looksLikeCategoryInput(""));
-        assertFalse(e.looksLikeCategoryInput("   "));
+        assertTrue(e.isLikeCategoryInput("спорт, экономика"));
+        assertTrue(e.isLikeCategoryInput("технологии"));
+        assertFalse(e.isLikeCategoryInput("\\news add спорт"));
+        assertFalse(e.isLikeCategoryInput(""));
+        assertFalse(e.isLikeCategoryInput("   "));
     }
 }

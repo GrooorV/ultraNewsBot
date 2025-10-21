@@ -9,7 +9,7 @@ public class DialogueEngine {
         return "\\help".equalsIgnoreCase(input);
     }
 
-    public boolean looksLikeCategoryInput(String input) {
+    public boolean isLikeCategoryInput(String input) {
         return input != null && !input.isBlank() && !input.startsWith("\\");
     }
 }
