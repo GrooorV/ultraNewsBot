@@ -33,7 +33,6 @@ class CommandResolverTest {
 
     @BeforeEach
     void setUp() {
-        DialogueEngine realEngine = new DialogueEngine();
         BotCommand helpCommand = new StubHelpCommand();
         BotCommand freeTextCommand = new StubFreeTextCommand();
 

@@ -1,7 +1,6 @@
 package newsbot.command.resolver;
 
 import newsbot.command.BotCommand;
-import newsbot.engine.DialogueEngine;
 import newsbot.news.NewsCategory;
 
 import java.util.HashMap;
