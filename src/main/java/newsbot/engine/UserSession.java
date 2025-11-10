@@ -1,6 +1,6 @@
 package newsbot.engine;
 
-public class Session {
+public class UserSession {
     private boolean started;
 
     public boolean isStarted() { return started; }

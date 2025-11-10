@@ -1,84 +1,145 @@
 package newsbot.engine;
 
+import newsbot.command.*;
+import newsbot.command.resolver.CommandResolver;
 import newsbot.news.NewsPreferenceService;
+import newsbot.repository.SessionRepository;
+import newsbot.repository.UserProfileRepository;
 import newsbot.repository.memory.InMemorySessionRepository;
 import newsbot.repository.memory.InMemoryUserProfileRepository;
-import org.junit.jupiter.api.Test;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class DialogueServiceTest {
 
-    private DialogueService newService() {
-        return new DialogueService(
-                new DialogueEngine(),
-                new InMemorySessionRepository(),
-                new NewsPreferenceService(new InMemoryUserProfileRepository())
-        );
+    private DialogueService svc;
+    private UserProfileRepository userProfileRepo;
+    private SessionRepository sessionRepo;
+
+    /**
+     * Этот метод @BeforeEach воссоздает "сборку" зависимостей
+     * так же, как это делает ConsoleApp.main
+     */
+    @BeforeEach
+    void setupFullService() {
+        // 1. Репозитории
+        userProfileRepo = new InMemoryUserProfileRepository();
+        sessionRepo = new InMemorySessionRepository();
+
+        // 2. Сервисы и движок
+        DialogueEngine engine = new DialogueEngine();
+        NewsPreferenceService newsPrefs = new NewsPreferenceService(userProfileRepo);
+
+        // 3. Команды
+        BotCommand helpCommand = new HelpCommand();
+        BotCommand availableCommand = new AvailableCommand(newsPrefs);
+        BotCommand newsCommand = new NewsCommand(newsPrefs);
+        BotCommand setCategoriesCommand = new SetCategoriesCommand(newsPrefs);
+        BotCommand changeUserCommand = new ChangeProfileCommand();
+        BotCommand whoAmICommand = new WhoAmICommand();
+
+        // 4. Резолвер
+        CommandResolver commandResolver = new CommandResolver(setCategoriesCommand);
+        commandResolver.register("\\help", helpCommand);
+        commandResolver.register("\\available", availableCommand);
+        commandResolver.register("\\news", newsCommand);
+        commandResolver.register("\\changeuser", changeUserCommand);
+        commandResolver.register("\\whoami", whoAmICommand);
+
+        // 5. Сервис
+        svc = new DialogueService(engine, sessionRepo, commandResolver);
     }
 
     @Test
     void showsOnboardingAtFirstEmptyInput() {
-        DialogueService svc = newService();
-        String r = svc.handle("u", "");
-        assertTrue(r.startsWith("Начнём!"));
+        BotResponse r = svc.handle("u", "");
+        assertTrue(r.getMessage().startsWith("Начнём!"));
+        assertFalse(r.getNewActiveUser().isPresent()); // Проверяем, что нет смены юзера
     }
 
     @Test
     void parsesCommaAndSemicolonSeparatedCategories() {
-        DialogueService svc = newService();
         svc.handle("u", ""); // start
-        String r = svc.handle("u", "спорт; экономика, технологии");
-        assertTrue(r.contains("Запомнил категории"));
-        String list = svc.handle("u", "\\news list");
-        assertTrue(list.contains("спорт"));
-        assertTrue(list.toLowerCase().contains("экономика"));
-        assertTrue(list.toLowerCase().contains("технологии"));
+        BotResponse r = svc.handle("u", "спорт; экономика, технологии");
+        assertTrue(r.getMessage().contains("Запомнил категории"));
+
+        BotResponse list = svc.handle("u", "\\news list");
+        String listMsg = list.getMessage().toLowerCase();
+        assertTrue(listMsg.contains("спорт"));
+        assertTrue(listMsg.contains("экономика"));
+        assertTrue(listMsg.contains("технологии"));
     }
 
     @Test
     void helpAndAvailableCommandsWork() {
-        DialogueService svc = newService();
-        assertTrue(svc.handle("u", "\\help").toLowerCase().contains("новостной"));
-        String avail = svc.handle("u", "\\available").toLowerCase();
-        assertTrue(avail.contains("доступные категории"));
-        assertTrue(avail.contains("спорт"));
+        BotResponse help = svc.handle("u", "\\help");
+        assertTrue(help.getMessage().toLowerCase().contains("новостной"));
+
+        BotResponse avail = svc.handle("u", "\\available");
+        String availMsg = avail.getMessage().toLowerCase();
+        assertTrue(availMsg.contains("доступные категории"));
+        assertTrue(availMsg.contains("спорт"));
     }
 
     @Test
     void newsAddAndDelCommands() {
-        DialogueService svc = newService();
         svc.handle("u", ""); // start
-        assertTrue(svc.handle("u", "\\news list").contains("ни одной"));
-        assertTrue(svc.handle("u", "\\news add спорт").contains("Добавил"));
-        assertTrue(svc.handle("u", "\\news list").contains("спорт"));
-        assertTrue(svc.handle("u", "\\news del спорт").contains("Удалил"));
-        assertTrue(svc.handle("u", "\\news list").contains("ни одной"));
+        assertTrue(svc.handle("u", "\\news list").getMessage().contains("ни одной"));
+        assertTrue(svc.handle("u", "\\news add спорт").getMessage().contains("Добавил"));
+        assertTrue(svc.handle("u", "\\news list").getMessage().contains("спорт"));
+        assertTrue(svc.handle("u", "\\news del спорт").getMessage().contains("Удалил"));
+        assertTrue(svc.handle("u", "\\news list").getMessage().contains("ни одной"));
     }
 
     @Test
     void multiUserProfilesAreIndependent() {
-        DialogueService svc = newService();
-
         // user1
         svc.handle("u1", "");
         svc.handle("u1", "\\news add спорт");
 
         // user2
         svc.handle("u2", "");
-        String list2 = svc.handle("u2", "\\news list");
-        assertEquals("Ваши категории: пока не выбрано ни одной категории!", list2);
+        BotResponse list2 = svc.handle("u2", "\\news list");
+        assertEquals("Ваши категории: пока не выбрано ни одной категории!", list2.getMessage());
 
         // user1 still has category
-        String list1 = svc.handle("u1", "\\news list");
-        assertTrue(list1.contains("спорт"));
+        BotResponse list1 = svc.handle("u1", "\\news list");
+        assertTrue(list1.getMessage().contains("спорт"));
     }
 
     @Test
     void emptyInputAfterStartRepeatsOnboardingTip() {
-        DialogueService svc = newService();
         svc.handle("u", ""); // onboarding
-        String r = svc.handle("u", ""); // empty again
-        assertTrue(r.toLowerCase().contains("новости о чём вас интересуют"));
+        BotResponse r = svc.handle("u", ""); // empty again
+        assertTrue(r.getMessage().toLowerCase().contains("новости о чём вас интересуют"));
+    }
+
+
+    @Test
+    void whoAmICommandReturnsCurrentUserId() {
+        BotResponse r = svc.handle("user-123", "\\whoami");
+        assertEquals("Текущий профиль: user-123", r.getMessage());
+        assertFalse(r.getNewActiveUser().isPresent());
+    }
+
+    @Test
+    void changeUserCommandReturnsSpecialResponse() {
+        BotResponse r = svc.handle("user-123", "\\changeuser admin");
+
+        // 1. Проверяем сообщение
+        assertEquals("Текущий профиль: admin", r.getMessage());
+
+        // 2. Проверяем *инструкцию* для адаптера
+        assertTrue(r.getNewActiveUser().isPresent());
+        assertEquals("admin", r.getNewActiveUser().get());
+    }
+
+    @Test
+    void changeUserCommandRequiresArgument() {
+        BotResponse r = svc.handle("u", "\\changeuser ");
+        assertEquals("Использование: \\changeuser <userId>", r.getMessage());
+        assertFalse(r.getNewActiveUser().isPresent());
     }
 }
