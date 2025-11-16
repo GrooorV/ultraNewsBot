@@ -14,6 +14,12 @@ public class NewsCommand implements  BotCommand {
     }
 
     @Override
+    public String getName() {
+        return "\\news";
+    }
+
+
+    @Override
     public BotResponse execute(UserId userId, String args) {
         String[] parts = args.trim().split("\\s+");
 

@@ -42,11 +42,11 @@ class DialogueServiceTest {
 
         // 4. Резолвер
         CommandResolver commandResolver = new CommandResolver(setCategoriesCommand);
-        commandResolver.register("\\help", helpCommand);
-        commandResolver.register("\\available", availableCommand);
-        commandResolver.register("\\news", newsCommand);
-        commandResolver.register("\\changeuser", changeUserCommand);
-        commandResolver.register("\\whoami", whoAmICommand);
+        commandResolver.register(helpCommand);
+        commandResolver.register(availableCommand);
+        commandResolver.register(newsCommand);
+        commandResolver.register(changeUserCommand);
+        commandResolver.register(whoAmICommand);
 
         // 5. Сервис
         svc = new DialogueService(engine, sessionRepo, commandResolver);

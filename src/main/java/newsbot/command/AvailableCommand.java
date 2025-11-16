@@ -14,6 +14,10 @@ public class AvailableCommand implements BotCommand {
     }
 
     @Override
+    public String getName() {
+        return "\\available";
+    }
+    @Override
     public BotResponse execute(UserId userId, String args) {
         return BotResponse.say("Доступные категории: " + newsPrefs.available());
     }

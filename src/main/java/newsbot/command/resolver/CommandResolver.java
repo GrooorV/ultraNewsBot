@@ -18,8 +18,8 @@ public class CommandResolver {
         this.freeTextHandler = Objects.requireNonNull(freeTextHandler);
     }
 
-    public void register(String name, BotCommand command) {
-        explicitCommands.put(name.toLowerCase(), command);
+    public void register(BotCommand command) {
+        explicitCommands.put(command.getName().toLowerCase(), command);
     }
 
     private boolean isLikeCategoryInput(String input) {

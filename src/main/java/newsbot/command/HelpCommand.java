@@ -6,6 +6,11 @@ import newsbot.shared.UserId;
 public class HelpCommand implements BotCommand {
 
     @Override
+    public String getName() {
+        return "\\help";
+    }
+
+    @Override
     public BotResponse execute(UserId userId, String args) {
         return BotResponse.say(
                 """

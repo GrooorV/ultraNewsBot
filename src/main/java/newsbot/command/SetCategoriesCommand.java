@@ -15,6 +15,11 @@ public class SetCategoriesCommand implements BotCommand {
     }
 
     @Override
+    public String getName() {
+        return "";
+    }
+
+    @Override
     public BotResponse execute(UserId userId, String args) {
         String[] cats = Arrays.stream(args.split("[,;]"))
                 .map(String::trim)

@@ -6,6 +6,11 @@ import newsbot.shared.UserId;
 public class ChangeProfileCommand implements BotCommand {
 
     @Override
+    public String getName() {
+        return "\\changeuser";
+    }
+
+    @Override
     public BotResponse execute(UserId userId, String args) {
         String newUserId = args.trim();
 

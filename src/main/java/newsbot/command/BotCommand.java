@@ -9,5 +9,7 @@ import newsbot.shared.UserId;
  */
 public interface BotCommand {
 
+    String getName();
+
     BotResponse execute(UserId userId, String args);
 }
