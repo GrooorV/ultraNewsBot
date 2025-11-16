@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LentaNewsProvider implements NewsProvider {
-    public List<NewsStory> getLentaRuNews() {
+    public List<NewsStory> getNews() {
         // Список новостей (пока пустой)
         List<NewsStory> news = new ArrayList<>();
         // Русская RSS-лента Lenta.ru
@@ -48,7 +48,7 @@ public class LentaNewsProvider implements NewsProvider {
                 String category = getTagValue("category", item);
                 // Получаем описание
                 URI descriptionURI = new URI(link);
-                String description = getLentaRuDescription(descriptionURI);
+                String description = getDescription(descriptionURI);
 
                 // Формируем список новостей
                 news.add(new NewsStory(title, date, author, link, category, description) );
@@ -62,7 +62,7 @@ public class LentaNewsProvider implements NewsProvider {
         }
     }
 
-    private static String getLentaRuDescription(URI descriptionURL) {
+    private static String getDescription(URI descriptionURL) {
         try (BufferedReader citeBuffer =
                      new BufferedReader(new InputStreamReader(descriptionURL.toURL().openStream()))) {
             String line;
