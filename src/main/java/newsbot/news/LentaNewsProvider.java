@@ -1,9 +1,12 @@
 package newsbot.news;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Element;
+
 import java.io.IOException;
 import java.net.URI;
 import java.io.InputStream;
@@ -13,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LentaNewsProvider implements NewsProvider {
+
     public List<NewsStory> getNews() {
         // Список новостей (пока пустой)
         List<NewsStory> news = new ArrayList<>();
@@ -45,13 +49,14 @@ public class LentaNewsProvider implements NewsProvider {
                 // Получаем ссылку
                 String link = getTagValue("link", item);
                 // Получаем категорию
-                String category = getTagValue("category", item);
+                String rawCategory = getTagValue("category", item);
+                NewsCategory mappedCategory = mapLentaCategory(rawCategory);
                 // Получаем описание
                 URI descriptionURI = new URI(link);
                 String description = getDescription(descriptionURI);
 
                 // Формируем список новостей
-                news.add(new NewsStory(title, date, author, link, category, description) );
+                news.add(new NewsStory(title, date, author, link, mappedCategory, description));
             }
 
             return news;
@@ -59,6 +64,49 @@ public class LentaNewsProvider implements NewsProvider {
         } catch (Exception e) {
             // Возвращает пустой список
             return news;
+        }
+    }
+
+    private NewsCategory mapLentaCategory(String lentaCategory) {
+        if (lentaCategory == null) {
+            return NewsCategory.OTHER;
+        }
+
+        // Используем switch для удобного маппинга
+        switch (lentaCategory) {
+            // POLITICS
+            case "Россия":
+            case "Мир":
+            case "Бывший СССР":
+            case "Силовые структуры":
+                return NewsCategory.POLITICS;
+
+            // ECONOMY
+            case "Экономика":
+                return NewsCategory.ECONOMY;
+
+            // TECHNOLOGY
+            case "Наука и техника":
+            case "Интернет и СМИ":
+                return NewsCategory.TECHNOLOGY;
+
+            // CULTURE
+            case "Культура":
+                return NewsCategory.CULTURE;
+
+            // SPORT
+            case "Спорт":
+                return NewsCategory.SPORT;
+
+            // OTHER (Все остальное)
+            case "Ценности":
+            case "Путешествия":
+            case "Из жизни":
+            case "Среда обитания":
+            case "Забота о себе":
+            case "Победа":
+            default:
+                return NewsCategory.OTHER;
         }
     }
 

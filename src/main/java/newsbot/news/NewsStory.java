@@ -1,11 +1,12 @@
 package newsbot.news;
 
+
 public record NewsStory(
         String title,
         String date,
         String author,
         String link,
-        String category,
+        NewsCategory category,
         String description
 ) {
     public void consolePrintNews() {
@@ -13,7 +14,7 @@ public record NewsStory(
         System.out.println(date);
         System.out.println(author);
         System.out.println(link);
-        System.out.println(category);
+        System.out.println(category.name());
         System.out.println(description);
         System.out.println();
     }
