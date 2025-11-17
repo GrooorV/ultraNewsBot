@@ -2,14 +2,22 @@ package newsbot.engine;
 
 import newsbot.command.*;
 import newsbot.command.resolver.CommandResolver;
+import newsbot.news.LentaNewsProvider;
+import newsbot.news.NewsFeedGenerator;
 import newsbot.news.NewsPreferenceService;
+import newsbot.news.NewsProvider;
+import newsbot.repository.NewsRepository;
 import newsbot.repository.SessionRepository;
 import newsbot.repository.UserProfileRepository;
+import newsbot.repository.memory.InMemoryNewsRepository;
 import newsbot.repository.memory.InMemorySessionRepository;
 import newsbot.repository.memory.InMemoryUserProfileRepository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.time.Duration;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class DialogueServiceTest {
@@ -17,6 +25,9 @@ class DialogueServiceTest {
     private DialogueService svc;
     private UserProfileRepository userProfileRepo;
     private SessionRepository sessionRepo;
+    private NewsRepository newsRepo;
+    private NewsProvider newsProvider;
+    private NewsFeedGenerator feedGenerator;
 
     /**
      * Этот метод @BeforeEach воссоздает "сборку" зависимостей
@@ -25,9 +36,13 @@ class DialogueServiceTest {
     @BeforeEach
     void setupFullService() {
         // 1. Репозитории
+        newsProvider = new LentaNewsProvider();
+
         userProfileRepo = new InMemoryUserProfileRepository();
         sessionRepo = new InMemorySessionRepository();
+        newsRepo = new InMemoryNewsRepository(newsProvider);
 
+        feedGenerator = new NewsFeedGenerator(userProfileRepo, sessionRepo, newsRepo);
         // 2. Сервисы и движок
         DialogueEngine engine = new DialogueEngine();
         NewsPreferenceService newsPrefs = new NewsPreferenceService(userProfileRepo);
@@ -35,7 +50,7 @@ class DialogueServiceTest {
         // 3. Команды
         BotCommand helpCommand = new HelpCommand();
         BotCommand availableCommand = new AvailableCommand(newsPrefs);
-        BotCommand newsCommand = new NewsCommand(newsPrefs);
+        BotCommand newsCommand = new NewsCommand(newsPrefs, feedGenerator);
         BotCommand setCategoriesCommand = new SetCategoriesCommand(newsPrefs);
         BotCommand changeUserCommand = new ChangeProfileCommand();
         BotCommand whoAmICommand = new WhoAmICommand();

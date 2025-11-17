@@ -35,7 +35,7 @@ public class UserSession {
     }
 
 
-    public void SetPendingNews(List<NewsStory> news) {
+    public void setPendingNews(List<NewsStory> news) {
         this.pendingNewsLinks = news.stream().map(NewsStory::link).toList();
         this.pendingNewsIndex = 0;
     }

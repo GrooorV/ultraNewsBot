@@ -3,14 +3,17 @@ package newsbot.command;
 import newsbot.engine.BotResponse;
 import newsbot.news.NewsPreferenceService;
 import newsbot.shared.UserId;
+import newsbot.news.NewsFeedGenerator;
 import java.util.Objects;
 
-public class NewsCommand implements  BotCommand {
+public class NewsCommand implements BotCommand {
 
     private final NewsPreferenceService newsPrefs;
+    private final NewsFeedGenerator feedGenerator;
 
-    public NewsCommand(NewsPreferenceService newsPrefs) {
+    public NewsCommand(NewsPreferenceService newsPrefs, NewsFeedGenerator feedGenerator) {
         this.newsPrefs = Objects.requireNonNull(newsPrefs);
+        this.feedGenerator = feedGenerator;
     }
 
     @Override
@@ -37,6 +40,11 @@ public class NewsCommand implements  BotCommand {
             return BotResponse.say("Удалил категорию: " + parts[1]);
         }
 
-        return BotResponse.say("Использование: \\news list | \\news add <категория> | \\news del <категория>");
+        if ("get".equalsIgnoreCase(parts[0])) {
+            return BotResponse.say(feedGenerator.getOneStory(userId));
+        }
+
+        return BotResponse.say("Использование: \\news list | \\news add <категория> " +
+                "| \\news del <категория> | \\new get");
     }
 }

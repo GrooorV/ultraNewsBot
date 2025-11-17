@@ -115,7 +115,7 @@ public class LentaNewsProvider implements NewsProvider {
                      new BufferedReader(new InputStreamReader(descriptionURL.toURL().openStream()))) {
             String line;
             // Значение по умолчанию
-            String description = "Нет";
+            String description = null;
             String searchStr = "\"description\": \"";
 
             while ((line = citeBuffer.readLine()) != null) {
@@ -139,6 +139,6 @@ public class LentaNewsProvider implements NewsProvider {
         if (nodeList != null && nodeList.getLength() > 0) {
             return nodeList.item(0).getTextContent();
         }
-        return "Нет";
+        return null;
     }
 }

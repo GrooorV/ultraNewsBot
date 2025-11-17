@@ -3,9 +3,14 @@ package newsbot.app;
 import newsbot.console.ConsoleAdapter;
 import newsbot.engine.DialogueService;
 import newsbot.engine.DialogueEngine;
+import newsbot.news.LentaNewsProvider;
 import newsbot.news.NewsPreferenceService;
+import newsbot.news.NewsProvider;
+import newsbot.news.NewsFeedGenerator;
+import newsbot.repository.NewsRepository;
 import newsbot.repository.SessionRepository;
 import newsbot.repository.UserProfileRepository;
+import newsbot.repository.memory.InMemoryNewsRepository;
 import newsbot.repository.memory.InMemorySessionRepository;
 import newsbot.repository.memory.InMemoryUserProfileRepository;
 
@@ -13,18 +18,25 @@ import newsbot.repository.memory.InMemoryUserProfileRepository;
 import newsbot.command.*;
 import newsbot.command.resolver.CommandResolver;
 
+import java.time.Duration;
+
 
 public class ConsoleApp {
     public static void main(String[] args) {
+        NewsProvider newsProvider = new LentaNewsProvider();
+
         UserProfileRepository userProfileRepo = new InMemoryUserProfileRepository();
         SessionRepository sessionRepo = new InMemorySessionRepository();
+        NewsRepository newsRepo = new InMemoryNewsRepository(newsProvider);
+
+        NewsFeedGenerator feedGenerator = new NewsFeedGenerator(userProfileRepo, sessionRepo, newsRepo);
 
         DialogueEngine engine = new DialogueEngine();
         NewsPreferenceService newsPrefs = new NewsPreferenceService(userProfileRepo);
 
         BotCommand helpCommand = new HelpCommand();
         BotCommand availableCommand = new AvailableCommand(newsPrefs);
-        BotCommand newsCommand = new NewsCommand(newsPrefs);
+        BotCommand newsCommand = new NewsCommand(newsPrefs, feedGenerator);
         BotCommand setCategoriesCommand = new SetCategoriesCommand(newsPrefs);
         BotCommand changeUserCommand = new ChangeProfileCommand();
         BotCommand whoAmICommand = new WhoAmICommand();
