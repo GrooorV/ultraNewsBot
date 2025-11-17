@@ -5,6 +5,7 @@ import newsbot.news.NewsStory;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class UserSession {
@@ -36,7 +37,7 @@ public class UserSession {
 
 
     public void setPendingNews(List<NewsStory> news) {
-        this.pendingNewsLinks = news.stream().map(NewsStory::link).toList();
+        this.pendingNewsLinks = news.stream().map(NewsStory::link).collect(Collectors.toCollection(ArrayList::new));
         this.pendingNewsIndex = 0;
     }
 
