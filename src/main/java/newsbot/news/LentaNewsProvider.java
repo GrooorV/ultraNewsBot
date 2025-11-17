@@ -2,16 +2,19 @@ package newsbot.news;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.net.URI;
 import java.io.InputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,8 +64,9 @@ public class LentaNewsProvider implements NewsProvider {
 
             return news;
 
-        } catch (Exception e) {
+        } catch (IOException | URISyntaxException | ParserConfigurationException | SAXException e) {
             // Возвращает пустой список
+            System.err.println("Не удалось загрузить новости Lenta: " + e.getMessage());
             return news;
         }
     }
@@ -128,9 +132,9 @@ public class LentaNewsProvider implements NewsProvider {
                     break;
                 }
             }
-            return description;
+            return (description == null) ? "Нет" : description;
         } catch (IOException e) {
-            return "Ошибка";
+            return "Ошибка чтения страницы";
         }
     }
 
@@ -139,6 +143,6 @@ public class LentaNewsProvider implements NewsProvider {
         if (nodeList != null && nodeList.getLength() > 0) {
             return nodeList.item(0).getTextContent();
         }
-        return null;
+        return "Нет";
     }
 }
