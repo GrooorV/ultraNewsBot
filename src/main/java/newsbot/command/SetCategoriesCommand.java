@@ -1,7 +1,9 @@
 package newsbot.command;
 
 import newsbot.engine.BotResponse;
+import newsbot.engine.UserSession;
 import newsbot.news.NewsPreferenceService;
+import newsbot.repository.SessionRepository;
 import newsbot.shared.UserId;
 import java.util.Arrays;
 import java.util.Objects;
@@ -9,14 +11,16 @@ import java.util.Objects;
 public class SetCategoriesCommand implements BotCommand {
 
     private final NewsPreferenceService newsPrefs;
+    private final SessionRepository sessionRepository;
 
-    public SetCategoriesCommand(NewsPreferenceService newsPrefs) {
+    public SetCategoriesCommand(NewsPreferenceService newsPrefs, SessionRepository sessionRepository) {
         this.newsPrefs = Objects.requireNonNull(newsPrefs);
+        this.sessionRepository = Objects.requireNonNull(sessionRepository);
     }
 
     @Override
     public String getName() {
-        return "";
+        return null;
     }
 
     @Override
@@ -33,6 +37,10 @@ public class SetCategoriesCommand implements BotCommand {
         for (String c : cats) {
             newsPrefs.add(userId, c);
         }
+
+        UserSession session = sessionRepository.getOrCreate(userId);
+        session.clearPendingNews();
+        sessionRepository.save(userId, session);
 
         return BotResponse.say(
                 "Запомнил категории: " + String.join(", ", cats) +
