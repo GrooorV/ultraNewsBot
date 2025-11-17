@@ -18,8 +18,6 @@ import newsbot.repository.memory.InMemoryUserProfileRepository;
 import newsbot.command.*;
 import newsbot.command.resolver.CommandResolver;
 
-import java.time.Duration;
-
 
 public class ConsoleApp {
     public static void main(String[] args) {

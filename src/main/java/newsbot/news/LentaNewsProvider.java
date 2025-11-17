@@ -77,41 +77,25 @@ public class LentaNewsProvider implements NewsProvider {
         }
 
         // Используем switch для удобного маппинга
-        switch (lentaCategory) {
+        return switch (lentaCategory) {
             // POLITICS
-            case "Россия":
-            case "Мир":
-            case "Бывший СССР":
-            case "Силовые структуры":
-                return NewsCategory.POLITICS;
+            case "Россия", "Мир", "Бывший СССР", "Силовые структуры" -> NewsCategory.POLITICS;
 
             // ECONOMY
-            case "Экономика":
-                return NewsCategory.ECONOMY;
+            case "Экономика" -> NewsCategory.ECONOMY;
 
             // TECHNOLOGY
-            case "Наука и техника":
-            case "Интернет и СМИ":
-                return NewsCategory.TECHNOLOGY;
+            case "Наука и техника", "Интернет и СМИ" -> NewsCategory.TECHNOLOGY;
 
             // CULTURE
-            case "Культура":
-                return NewsCategory.CULTURE;
+            case "Культура" -> NewsCategory.CULTURE;
 
             // SPORT
-            case "Спорт":
-                return NewsCategory.SPORT;
+            case "Спорт" -> NewsCategory.SPORT;
 
             // OTHER (Все остальное)
-            case "Ценности":
-            case "Путешествия":
-            case "Из жизни":
-            case "Среда обитания":
-            case "Забота о себе":
-            case "Победа":
-            default:
-                return NewsCategory.OTHER;
-        }
+            default -> NewsCategory.OTHER;
+        };
     }
 
     private static String getDescription(URI descriptionURL) {
@@ -140,7 +124,7 @@ public class LentaNewsProvider implements NewsProvider {
 
     private static String getTagValue(String tag, Element element) {
         NodeList nodeList = element.getElementsByTagName(tag);
-        if (nodeList != null && nodeList.getLength() > 0) {
+        if (nodeList.getLength() > 0) {
             return nodeList.item(0).getTextContent();
         }
         return "Нет";

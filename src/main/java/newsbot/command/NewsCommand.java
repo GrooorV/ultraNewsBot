@@ -1,12 +1,8 @@
 package newsbot.command;
 
 import newsbot.engine.BotResponse;
-import newsbot.engine.UserSession;
-import newsbot.news.NewsPreferenceService;
-import newsbot.repository.SessionRepository;
 import newsbot.shared.UserId;
 import newsbot.news.NewsFeedGenerator;
-import java.util.Objects;
 
 public class NewsCommand implements BotCommand {
 

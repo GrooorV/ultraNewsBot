@@ -17,25 +17,21 @@ import static org.junit.jupiter.api.Assertions.*;
 class DialogueServiceTest {
 
     private DialogueService svc;
-    private UserProfileRepository userProfileRepo;
-    private SessionRepository sessionRepo;
-    private NewsRepository newsRepo;
-    private FakeNewsProvider newsProvider; // <-- Изменено
-    private NewsFeedGenerator feedGenerator;
 
     @BeforeEach
     void setupFullService() {
         // 1. Провайдер (фейковый)
-        newsProvider = new FakeNewsProvider(); // <-- Используем фейк
+        // <-- Изменено
+        FakeNewsProvider newsProvider = new FakeNewsProvider(); // <-- Используем фейк
 
         // 2. Репозитории
-        userProfileRepo = new InMemoryUserProfileRepository();
-        sessionRepo = new InMemorySessionRepository();
-        newsRepo = new InMemoryNewsRepository(newsProvider); // <-- Передаем фейк
+        UserProfileRepository userProfileRepo = new InMemoryUserProfileRepository();
+        SessionRepository sessionRepo = new InMemorySessionRepository();
+        NewsRepository newsRepo = new InMemoryNewsRepository(newsProvider); // <-- Передаем фейк
 
         // 3. Сервисы и движок
         // (Мы следуем ВАШЕЙ архитектуре со "смарт"-генератором)
-        feedGenerator = new NewsFeedGenerator(userProfileRepo, sessionRepo, newsRepo);
+        NewsFeedGenerator feedGenerator = new NewsFeedGenerator(userProfileRepo, sessionRepo, newsRepo);
         DialogueEngine engine = new DialogueEngine();
         NewsPreferenceService newsPrefs = new NewsPreferenceService(userProfileRepo);
 
