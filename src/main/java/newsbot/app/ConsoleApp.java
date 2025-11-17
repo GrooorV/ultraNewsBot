@@ -36,8 +36,9 @@ public class ConsoleApp {
 
         BotCommand helpCommand = new HelpCommand();
         BotCommand availableCommand = new AvailableCommand(newsPrefs);
-        BotCommand newsCommand = new NewsCommand(newsPrefs, feedGenerator);
-        BotCommand setCategoriesCommand = new SetCategoriesCommand(newsPrefs);
+        BotCommand newsCommand = new NewsCommand(feedGenerator);
+        BotCommand categoryCommand = new CategoryCommand(newsPrefs, sessionRepo);
+        BotCommand setCategoriesCommand = new SetCategoriesCommand(newsPrefs,  sessionRepo);
         BotCommand changeUserCommand = new ChangeProfileCommand();
         BotCommand whoAmICommand = new WhoAmICommand();
 
@@ -46,6 +47,7 @@ public class ConsoleApp {
         commandResolver.register(helpCommand);
         commandResolver.register(availableCommand);
         commandResolver.register(newsCommand);
+        commandResolver.register(categoryCommand);
         commandResolver.register(changeUserCommand);
         commandResolver.register(whoAmICommand);
 
