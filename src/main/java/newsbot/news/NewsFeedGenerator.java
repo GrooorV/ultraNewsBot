@@ -29,13 +29,29 @@ public class NewsFeedGenerator {
             return "Вы не выбрали ни одной категории. Выберите хотя бы одну, к примеру, экономика или спорт";
         }
         Set<NewsCategory> categories = userProfileRepo.getCategories(userId);
+
         if (!userSession.hasPendingNews()) {
-            userSession.setPendingNews(newsRepo.getNewsByCategory(categories, Instant.now()));
+
+            Instant since = userSession.getLastNewsCheckTime();
+            if (since == null) {
+                since = Instant.now().minus(24, java.time.temporal.ChronoUnit.HOURS);
+            }
+
+            List<NewsStory> freshNews = newsRepo.getNewsByCategory(categories, since);
+
             userSession.setLastNewsCheckTime(Instant.now());
+
+            if (freshNews.isEmpty()) {
+                sessionRepo.save(userId, userSession); // Сохраняем обновленное время
+                return "Новых новостей по вашим категориям нет.";
+            }
+            userSession.setPendingNews(freshNews);
         }
 
         List<String> links = userSession.getNextChunkIds(1);
         List<NewsStory> newsStories = newsRepo.getNewsByLinks(links);
+
+        sessionRepo.save(userId, userSession);
 
         return BuildResponse(newsStories);
     }
