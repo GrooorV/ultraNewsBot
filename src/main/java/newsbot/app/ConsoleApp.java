@@ -36,7 +36,7 @@ public class ConsoleApp {
         BotCommand availableCommand = new AvailableCommand(newsPrefs);
         BotCommand newsCommand = new NewsCommand(feedGenerator);
         BotCommand categoryCommand = new CategoryCommand(newsPrefs, sessionRepo);
-        BotCommand setCategoriesCommand = new SetCategoriesCommand(newsPrefs,  sessionRepo);
+        BotCommand setCategoriesCommand = new SetCategoriesCommand(newsPrefs, sessionRepo);
         BotCommand changeUserCommand = new ChangeProfileCommand();
         BotCommand whoAmICommand = new WhoAmICommand();
 

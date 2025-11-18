@@ -51,7 +51,7 @@ public class InMemoryNewsRepository implements NewsRepository {
         // Проверка: другой поток уже обновляет?
         if (lock.tryLock()) {
             try {
-                // Двойная проверка
+
                 if (lastFetchTime != null && Instant.now().isBefore(lastFetchTime.plus(cacheDuration))) {
                     return;
                 }

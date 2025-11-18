@@ -6,6 +6,8 @@ import newsbot.news.NewsPreferenceService;
 import newsbot.repository.SessionRepository;
 import newsbot.shared.UserId;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Objects;
 
 
@@ -54,6 +56,7 @@ public class CategoryCommand implements BotCommand {
 
     private void clearPendingNews(UserId userId) {
         UserSession session = sessionRepo.getOrCreate(userId);
+        session.setLastNewsCheckTime(Instant.now().minus(Duration.ofHours(24)));
         session.clearPendingNews();
         sessionRepo.save(userId, session);
     }
