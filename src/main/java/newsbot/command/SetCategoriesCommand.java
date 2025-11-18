@@ -20,7 +20,7 @@ public class SetCategoriesCommand implements BotCommand {
 
     @Override
     public String getName() {
-        return null;
+        return "\\default";
     }
 
     @Override

@@ -1,132 +1,33 @@
 package newsbot.news;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Element;
+import newsbot.network.DataFetcher; // <-- Импорт
 import org.xml.sax.SAXException;
-
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.net.URI;
 import java.io.InputStream;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
+
+
 
 public class LentaNewsProvider implements NewsProvider {
 
+    private final DataFetcher fetcher;
+    private final LentaRssParser parser;
+    private final String rssUrl = "https://lenta.ru/rss";
+
+    public LentaNewsProvider(DataFetcher fetcher, LentaRssParser parser) {
+        this.fetcher = fetcher;
+        this.parser = parser;
+    }
+
+    @Override
     public List<NewsStory> getNews() {
-        // Список новостей (пока пустой)
-        List<NewsStory> news = new ArrayList<>();
-        // Русская RSS-лента Lenta.ru
-        String rssUrl = "https://lenta.ru/rss";
-
-        // Пробуем загрузить RSS-ленту
-        try (InputStream stream = new URI(rssUrl).toURL().openStream()) {
-
-            // Создаем парсер
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-
-            // Парсим XML
-            Document doc = builder.parse(stream);
-            doc.getDocumentElement().normalize();
-
-            // Получаем все элементы <item>
-            NodeList items = doc.getElementsByTagName("item");
-
-            for (int i = 0; i < items.getLength(); i++) {
-                Element item = (Element) items.item(i);
-
-                // Получаем заголовок
-                String title = getTagValue("title", item);
-                // Получаем дату
-                String date = getTagValue("pubDate", item);
-                // Получаем автора
-                String author = getTagValue("author", item);
-                // Получаем ссылку
-                String link = getTagValue("link", item);
-                // Получаем категорию
-                String rawCategory = getTagValue("category", item);
-                NewsCategory mappedCategory = mapLentaCategory(rawCategory);
-                // Получаем описание
-                URI descriptionURI = new URI(link);
-                String description = getDescription(descriptionURI);
-
-                // Формируем список новостей
-                news.add(new NewsStory(title, date, author, link, mappedCategory, description));
-            }
-
-            return news;
-
+        try (InputStream stream = fetcher.fetch(rssUrl)) {
+            return parser.parse(stream);
         } catch (IOException | URISyntaxException | ParserConfigurationException | SAXException e) {
-            // Возвращает пустой список
-            System.err.println("Не удалось загрузить новости Lenta: " + e.getMessage());
-            return news;
+            System.err.println("Не удалось получить или распарсить новости Lenta: " + e.getMessage());
+            return List.of();
         }
-    }
-
-    private NewsCategory mapLentaCategory(String lentaCategory) {
-        if (lentaCategory == null) {
-            return NewsCategory.OTHER;
-        }
-
-        // Используем switch для удобного маппинга
-        return switch (lentaCategory) {
-            // POLITICS
-            case "Россия", "Мир", "Бывший СССР", "Силовые структуры" -> NewsCategory.POLITICS;
-
-            // ECONOMY
-            case "Экономика" -> NewsCategory.ECONOMY;
-
-            // TECHNOLOGY
-            case "Наука и техника", "Интернет и СМИ" -> NewsCategory.TECHNOLOGY;
-
-            // CULTURE
-            case "Культура" -> NewsCategory.CULTURE;
-
-            // SPORT
-            case "Спорт" -> NewsCategory.SPORT;
-
-            // OTHER (Все остальное)
-            default -> NewsCategory.OTHER;
-        };
-    }
-
-    private static String getDescription(URI descriptionURL) {
-        try (BufferedReader citeBuffer =
-                     new BufferedReader(new InputStreamReader(descriptionURL.toURL().openStream()))) {
-            String line;
-            // Значение по умолчанию
-            String description = null;
-            String searchStr = "\"description\": \"";
-
-            while ((line = citeBuffer.readLine()) != null) {
-                if (line.contains(searchStr)) {
-                    int start = line.indexOf(searchStr) + searchStr.length();
-                    int end = line.indexOf("\"", start);
-                    if (end != -1) {
-                        description = line.substring(start, end);
-                    }
-                    break;
-                }
-            }
-            return (description == null) ? "Нет" : description;
-        } catch (IOException e) {
-            return "Ошибка чтения страницы";
-        }
-    }
-
-    private static String getTagValue(String tag, Element element) {
-        NodeList nodeList = element.getElementsByTagName(tag);
-        if (nodeList.getLength() > 0) {
-            return nodeList.item(0).getTextContent();
-        }
-        return "Нет";
     }
 }

@@ -3,10 +3,9 @@ package newsbot.app;
 import newsbot.console.ConsoleAdapter;
 import newsbot.engine.DialogueService;
 import newsbot.engine.DialogueEngine;
-import newsbot.news.LentaNewsProvider;
-import newsbot.news.NewsPreferenceService;
-import newsbot.news.NewsProvider;
-import newsbot.news.NewsFeedGenerator;
+import newsbot.network.DataFetcher;
+import newsbot.network.HttpDataFetcher;
+import newsbot.news.*;
 import newsbot.repository.NewsRepository;
 import newsbot.repository.SessionRepository;
 import newsbot.repository.UserProfileRepository;
@@ -21,7 +20,10 @@ import newsbot.command.resolver.CommandResolver;
 
 public class ConsoleApp {
     public static void main(String[] args) {
-        NewsProvider newsProvider = new LentaNewsProvider();
+        DataFetcher fetcher = new HttpDataFetcher();
+        LentaRssParser  parser = new LentaRssParser(fetcher);
+
+        NewsProvider newsProvider = new LentaNewsProvider(fetcher, parser);
 
         UserProfileRepository userProfileRepo = new InMemoryUserProfileRepository();
         SessionRepository sessionRepo = new InMemorySessionRepository();
