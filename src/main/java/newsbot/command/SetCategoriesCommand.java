@@ -25,7 +25,7 @@ public class SetCategoriesCommand implements BotCommand {
 
     @Override
     public BotResponse execute(UserId userId, String args) {
-        String[] cats = Arrays.stream(args.split("[,;]"))
+        String[] cats = Arrays.stream(args.split("[\s,;]"))
                 .map(String::trim)
                 .filter(s -> !s.isBlank())
                 .toArray(String[]::new);
