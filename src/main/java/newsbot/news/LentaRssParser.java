@@ -3,6 +3,7 @@ package newsbot.news;
 import newsbot.network.DataFetcher; // <-- 1. Импортируем DataFetcher
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -55,7 +56,16 @@ public class LentaRssParser {
                 URI descriptionURI = new URI(link);
                 String description = getDescription(descriptionURI);
 
-                news.add(new NewsStory(title, date, author, link, mappedCategory, description));
+                String pictureLink = "";
+                Node enclosureNode = item.getElementsByTagName("enclosure").item(0);
+                if (enclosureNode != null && enclosureNode.getAttributes() != null) {
+                    Node urlAttr = enclosureNode.getAttributes().getNamedItem("url");
+                    if (urlAttr != null) {
+                        pictureLink = urlAttr.getNodeValue();
+                    }
+                }
+
+                news.add(new NewsStory(title, date, author, link, mappedCategory, description, pictureLink));
 
             } catch (Exception e) {
 

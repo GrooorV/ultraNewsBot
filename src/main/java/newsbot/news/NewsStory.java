@@ -7,6 +7,7 @@ public record NewsStory(
         String author,
         String link,
         NewsCategory category,
-        String description
+        String description,
+        String pictureLink
 ) {
 }
