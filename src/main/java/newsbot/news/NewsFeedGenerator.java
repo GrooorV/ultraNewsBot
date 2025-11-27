@@ -60,12 +60,13 @@ public class NewsFeedGenerator {
         StringBuilder response = new StringBuilder();
         for (NewsStory newsStory : newsStories) {
             response.append(newsStory.title())
-                    .append("\nАвтор: ")
+                    .append("\n\n")
+                    .append(newsStory.description())
+                    .append("\n\n")
+                    .append("Автор: ")
                     .append(newsStory.author())
                     .append("\n")
                     .append(newsStory.link())
-                    .append("\n")
-                    .append(newsStory.description())
                     .append("\n");
         }
         return response.toString();
