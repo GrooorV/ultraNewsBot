@@ -45,7 +45,7 @@ public class SetCategoriesCommand implements BotCommand {
         return BotResponse.say(
                 "Запомнил категории: " + String.join(", ", cats) +
                         ". Ваши категории сейчас: " + newsPrefs.list(userId) +
-                        ". Можете добавить ещё или используйте \\news list."
+                        ". Можете добавить ещё или используйте \\news get."
         );
     }
 }
