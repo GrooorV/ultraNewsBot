@@ -2,7 +2,9 @@ package newsbot.app;
 
 import newsbot.console.GeneralResponseButtons;
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import newsbot.console.TelegramAdapter;
+
 import newsbot.engine.DialogueService;
 import newsbot.engine.DialogueEngine;
 import newsbot.network.DataFetcher;
@@ -18,11 +20,9 @@ import newsbot.repository.memory.InMemoryUserProfileRepository;
 // Импорты команд
 import newsbot.command.*;
 import newsbot.command.resolver.CommandResolver;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
 
 public class TelegramApp {
-    public static void main(String[] args) throws TelegramApiException {
+    public static void run(String BOT_TOKEN) throws TelegramApiException {
         DataFetcher fetcher = new HttpDataFetcher();
         LentaRssParser  parser = new LentaRssParser(fetcher);
 
@@ -42,8 +42,6 @@ public class TelegramApp {
         BotCommand newsCommand = new NewsCommand(feedGenerator);
         BotCommand categoryCommand = new CategoryCommand(newsPrefs, sessionRepo);
         BotCommand setCategoriesCommand = new SetCategoriesCommand(newsPrefs, sessionRepo);
-        BotCommand changeUserCommand = new ChangeProfileCommand();
-        BotCommand whoAmICommand = new WhoAmICommand();
 
         CommandResolver commandResolver = new CommandResolver(setCategoriesCommand);
 
@@ -51,16 +49,14 @@ public class TelegramApp {
         commandResolver.register(availableCommand);
         commandResolver.register(newsCommand);
         commandResolver.register(categoryCommand);
-        commandResolver.register(changeUserCommand);
-        commandResolver.register(whoAmICommand);
 
         DialogueService dialogueService = new DialogueService(engine, sessionRepo, commandResolver);
 
         String botToken = "None"; //temp token var for testing
         GeneralResponseButtons generalResponseButtons = new GeneralResponseButtons();
 
-        TelegramAdapter telegramAdapter = new TelegramAdapter(botToken, dialogueService, generalResponseButtons);
+        TelegramAdapter telegramAdapter = new TelegramAdapter(BOT_TOKEN, dialogueService, generalResponseButtons);
         TelegramBotsLongPollingApplication app = new TelegramBotsLongPollingApplication();
-        app.registerBot(botToken, telegramAdapter);
+        app.registerBot(BOT_TOKEN, telegramAdapter);
     }
 }
