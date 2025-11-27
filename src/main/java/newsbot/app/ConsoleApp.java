@@ -19,7 +19,7 @@ import newsbot.command.resolver.CommandResolver;
 
 
 public class ConsoleApp {
-    public static void main(String[] args) {
+    public static void run() {
         DataFetcher fetcher = new HttpDataFetcher();
         LentaRssParser  parser = new LentaRssParser(fetcher);
 
