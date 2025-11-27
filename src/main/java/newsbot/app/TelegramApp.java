@@ -1,5 +1,6 @@
 package newsbot.app;
 
+import newsbot.console.GeneralResponseButtons;
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
 import newsbot.console.TelegramAdapter;
 import newsbot.engine.DialogueService;
@@ -55,9 +56,10 @@ public class TelegramApp {
 
         DialogueService dialogueService = new DialogueService(engine, sessionRepo, commandResolver);
 
-        String botToken = "token"; //temp token var for testing
+        String botToken = "None"; //temp token var for testing
+        GeneralResponseButtons generalResponseButtons = new GeneralResponseButtons();
 
-        TelegramAdapter telegramAdapter = new TelegramAdapter(botToken, dialogueService);
+        TelegramAdapter telegramAdapter = new TelegramAdapter(botToken, dialogueService, generalResponseButtons);
         TelegramBotsLongPollingApplication app = new TelegramBotsLongPollingApplication();
         app.registerBot(botToken, telegramAdapter);
     }
