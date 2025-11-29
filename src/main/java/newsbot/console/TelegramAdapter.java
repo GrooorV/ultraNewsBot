@@ -2,32 +2,36 @@ package newsbot.console;
 
 import newsbot.engine.BotResponse;
 import newsbot.engine.DialogueService;
+import newsbot.repository.UserProfileRepository;
+import newsbot.shared.UserId;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class TelegramAdapter implements LongPollingSingleThreadUpdateConsumer{
     private final TelegramClient telegramClient;
     private final DialogueService dialog;
     private final GeneralResponseButtons generalResponseButtons;
+    private final UserProfileRepository userProfileRepo;
 
-    public TelegramAdapter(String botToken, DialogueService dialog, GeneralResponseButtons generalResponseButtons) {
+    public TelegramAdapter(String botToken,
+                           DialogueService dialog,
+                           GeneralResponseButtons generalResponseButtons,
+                           UserProfileRepository userProfileRepo) {
         this.dialog = dialog;
         this.telegramClient = new OkHttpTelegramClient(botToken);
         this.generalResponseButtons = generalResponseButtons;
+        this.userProfileRepo = userProfileRepo;
     }
 
     @Override
     public void consume(Update update) {
+        System.out.println("i was here");
         String command = "";
         long chatID;
 
@@ -59,10 +63,12 @@ public class TelegramAdapter implements LongPollingSingleThreadUpdateConsumer{
     }
 
     private void sendMessage(long chatID, String text) {
+        UserId userId = new UserId(String.valueOf(chatID));
         SendMessage message = SendMessage.builder()
                 .chatId(chatID)
                 .text(text)
-                .replyMarkup(generalResponseButtons.setMessageWithGeneralButtons())
+                .replyMarkup(generalResponseButtons.getMessageWithGeneralButtons(userProfileRepo.getCategories(userId)))
+                .disableWebPagePreview(true)
                 .build();
         try {
             telegramClient.execute(message);
