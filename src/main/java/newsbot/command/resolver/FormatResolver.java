@@ -17,9 +17,13 @@ public class FormatResolver {
 
     public String italic(String message) {
         return switch (mode) {
-            case CONSOLE -> "\u001B[3m" + message + "\u001B[0m";
             case TELEGRAM -> "<i>" + message + "</i>";
+            case CONSOLE -> "\u001B[3m" + message + "\u001B[0m";
         };
+    }
+
+    public String imageLinkWarn(String message) {
+        return "<image>" + message + "</image>";
     }
 
     public enum OutputMode {
