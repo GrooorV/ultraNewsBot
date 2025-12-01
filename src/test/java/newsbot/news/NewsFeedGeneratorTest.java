@@ -23,11 +23,11 @@ class NewsFeedGeneratorTest {
 
     private static final NewsStory SPORT_STORY_1 = new NewsStory(
             "Спартак победил", "date", "author", "lenta.ru/sport1",
-            NewsCategory.SPORT, "Спартак победил Динамо");
+            NewsCategory.SPORT, "Спартак победил Динамо", "https://example.com/pic.jpg");
 
     private static final NewsStory ECON_STORY_1 = new NewsStory(
             "Доллар вырос", "date", "author", "lenta.ru/econ1",
-            NewsCategory.ECONOMY, "Доллар снова 100");
+            NewsCategory.ECONOMY, "Доллар снова 100", "https://example.com/pic.jpg");
 
 
     private NewsFeedGenerator generator;
@@ -51,7 +51,7 @@ class NewsFeedGeneratorTest {
     void failsIfCategoriesAreEmpty() {
 
         String response = new StoryContentBuilder().getStory(generator.getOneStory(testUser), new FormatResolver(FormatResolver.OutputMode.CONSOLE));
-        assertTrue(response.contains("Вы не выбрали ни одной категории"));
+        assertTrue(response.contains("Упс, видимо нет свежих новостей или же вы не выбрали категорий"));
     }
 
     @Test
@@ -115,6 +115,6 @@ class NewsFeedGeneratorTest {
         String response = new StoryContentBuilder().getStory(generator.getOneStory(testUser), new FormatResolver(FormatResolver.OutputMode.CONSOLE));
 
 
-        assertTrue(response.contains("Новых новостей по вашим категориям нет"));
+        assertTrue(response.contains("Упс, видимо нет свежих новостей или же вы не выбрали категорий"));
     }
 }
