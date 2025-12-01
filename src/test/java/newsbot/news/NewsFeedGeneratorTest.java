@@ -1,5 +1,6 @@
 package newsbot.news;
 
+import newsbot.command.resolver.FormatResolver;
 import newsbot.engine.UserSession;
 import newsbot.repository.NewsRepository;
 import newsbot.repository.SessionRepository;
@@ -49,8 +50,7 @@ class NewsFeedGeneratorTest {
     @Test
     void failsIfCategoriesAreEmpty() {
 
-
-        String response = generator.getOneStory(testUser);
+        String response = new StoryContentBuilder().getStory(generator.getOneStory(testUser), new FormatResolver(FormatResolver.OutputMode.CONSOLE));
         assertTrue(response.contains("Вы не выбрали ни одной категории"));
     }
 
@@ -62,7 +62,7 @@ class NewsFeedGeneratorTest {
 
         fakeProvider.setStoriesToReturn(List.of(SPORT_STORY_1));
 
-        String response = generator.getOneStory(testUser);
+        String response = new StoryContentBuilder().getStory(generator.getOneStory(testUser), new FormatResolver(FormatResolver.OutputMode.CONSOLE));
 
 
         assertTrue(response.contains("Спартак победил"));
@@ -95,12 +95,12 @@ class NewsFeedGeneratorTest {
         fakeProvider.setStoriesToReturn(List.of());
 
         // 6. Вызов 1 (теперь он найдет "lenta.ru/sport1" в cacheMap)
-        String response1 = generator.getOneStory(testUser);
+        String response1 = new StoryContentBuilder().getStory(generator.getOneStory(testUser), new FormatResolver(FormatResolver.OutputMode.CONSOLE));
         assertTrue(response1.contains("Спартак победил"), "Первая новость из очереди не найдена");
         assertTrue(sessionRepo.getOrCreate(testUser).hasPendingNews(), "Вторая новость не осталась в очереди");
 
         // 7. Вызов 2
-        String response2 = generator.getOneStory(testUser);
+        String response2 = new StoryContentBuilder().getStory(generator.getOneStory(testUser), new FormatResolver(FormatResolver.OutputMode.CONSOLE));
         assertTrue(response2.contains("Доллар вырос"), "Вторая новость из очереди не найдена");
         assertFalse(sessionRepo.getOrCreate(testUser).hasPendingNews(), "Очередь не опустела");
     }
@@ -112,7 +112,8 @@ class NewsFeedGeneratorTest {
 
         fakeProvider.setStoriesToReturn(List.of());
 
-        String response = generator.getOneStory(testUser);
+        String response = new StoryContentBuilder().getStory(generator.getOneStory(testUser), new FormatResolver(FormatResolver.OutputMode.CONSOLE));
+
 
         assertTrue(response.contains("Новых новостей по вашим категориям нет"));
     }
