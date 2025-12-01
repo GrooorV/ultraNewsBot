@@ -1,6 +1,7 @@
 package newsbot.app;
 
-import newsbot.console.ConsoleAdapter;
+import newsbot.adapter.ConsoleAdapter;
+import newsbot.command.resolver.FormatResolver;
 import newsbot.engine.DialogueService;
 import newsbot.engine.DialogueEngine;
 import newsbot.network.DataFetcher;
@@ -36,7 +37,7 @@ public class ConsoleApp {
 
         BotCommand helpCommand = new HelpCommand();
         BotCommand availableCommand = new AvailableCommand(newsPrefs);
-        BotCommand newsCommand = new NewsCommand(feedGenerator);
+        BotCommand newsCommand = new NewsCommand(feedGenerator, new FormatResolver(FormatResolver.OutputMode.CONSOLE));
         BotCommand categoryCommand = new CategoryCommand(newsPrefs, sessionRepo);
         BotCommand setCategoriesCommand = new SetCategoriesCommand(newsPrefs, sessionRepo);
         BotCommand changeUserCommand = new ChangeProfileCommand();

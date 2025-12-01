@@ -1,9 +1,10 @@
 package newsbot.app;
 
-import newsbot.console.GeneralResponseButtons;
+import newsbot.command.resolver.FormatResolver;
+import newsbot.ui.GeneralResponseButtons;
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import newsbot.console.TelegramAdapter;
+import newsbot.adapter.TelegramAdapter;
 
 import newsbot.engine.DialogueService;
 import newsbot.engine.DialogueEngine;
@@ -39,7 +40,7 @@ public class TelegramApp {
 
         BotCommand helpCommand = new HelpCommand();
         BotCommand availableCommand = new AvailableCommand(newsPrefs);
-        BotCommand newsCommand = new NewsCommand(feedGenerator);
+        BotCommand newsCommand = new NewsCommand(feedGenerator, new FormatResolver(FormatResolver.OutputMode.TELEGRAM));
         BotCommand categoryCommand = new CategoryCommand(newsPrefs, sessionRepo);
         BotCommand setCategoriesCommand = new SetCategoriesCommand(newsPrefs, sessionRepo);
 
