@@ -6,6 +6,7 @@ import newsbot.repository.SessionRepository;
 import newsbot.repository.NewsRepository;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -23,10 +24,10 @@ public class NewsFeedGenerator {
         this.newsRepo = newsRepo;
     }
 
-    public String getOneStory(UserId userId) {
+    public List<NewsStory> getOneStory(UserId userId) {
         UserSession userSession = sessionRepo.getOrCreate(userId);
         if (userProfileRepo.categoriesAreEmpty(userId)) {
-            return "Вы не выбрали ни одной категории. Выберите хотя бы одну, к примеру, экономика или спорт";
+            return new ArrayList<>();
         }
         Set<NewsCategory> categories = userProfileRepo.getCategories(userId);
 
@@ -43,7 +44,7 @@ public class NewsFeedGenerator {
 
             if (freshNews.isEmpty()) {
                 sessionRepo.save(userId, userSession); // Сохраняем обновленное время
-                return "Новых новостей по вашим категориям нет.";
+                return new ArrayList<NewsStory>();
             }
             userSession.setPendingNews(freshNews);
         }
@@ -53,22 +54,6 @@ public class NewsFeedGenerator {
 
         sessionRepo.save(userId, userSession);
 
-        return BuildResponse(newsStories);
-    }
-
-    private String BuildResponse(List<NewsStory> newsStories) {
-        StringBuilder response = new StringBuilder();
-        for (NewsStory newsStory : newsStories) {
-            response.append(newsStory.title())
-                    .append("\n\n")
-                    .append(newsStory.description())
-                    .append("\n\n")
-                    .append("Автор: ")
-                    .append(newsStory.author())
-                    .append("\n")
-                    .append(newsStory.link())
-                    .append("\n");
-        }
-        return response.toString();
+        return newsStories;
     }
 }
