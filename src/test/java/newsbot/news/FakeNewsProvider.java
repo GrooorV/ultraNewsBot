@@ -12,15 +12,15 @@ public class FakeNewsProvider implements NewsProvider {
     // --- Тестовые данные определены прямо здесь ---
     private static final NewsStory SPORT_STORY_1 = new NewsStory(
             "Спартак победил", "date", "author", "lenta.ru/sport1",
-            NewsCategory.SPORT, "Спартак победил Динамо");
+            NewsCategory.SPORT, "Спартак победил Динамо", "https://example.com/pic.jpg");
 
     private static final NewsStory ECON_STORY_1 = new NewsStory(
             "Доллар вырос", "date", "author", "lenta.ru/econ1",
-            NewsCategory.ECONOMY, "Доллар снова 100");
+            NewsCategory.ECONOMY, "Доллар снова 100", "https://example.com/pic.jpg");
 
     private static final NewsStory TECH_STORY_1 = new NewsStory(
             "Вышел новый Java", "date", "author", "lenta.ru/tech1",
-            NewsCategory.TECHNOLOGY, "Java 40");
+            NewsCategory.TECHNOLOGY, "Java 40", "https://example.com/pic.jpg");
 
 
     private List<NewsStory> storiesToReturn = new ArrayList<>();

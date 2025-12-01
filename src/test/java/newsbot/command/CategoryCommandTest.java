@@ -22,7 +22,7 @@ class CategoryCommandTest {
 
     private static final NewsStory TECH_STORY_1 = new NewsStory(
             "Вышел новый Java", "date", "author", "lenta.ru/tech1",
-            NewsCategory.TECHNOLOGY, "Java 40");
+            NewsCategory.TECHNOLOGY, "Java 40", "https://example.com/pic.jpg");
 
 
     private CategoryCommand command;
