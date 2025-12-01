@@ -1,5 +1,6 @@
-package newsbot.console;
+package newsbot.adapter;
 
+import newsbot.ui.GeneralResponseButtons;
 import newsbot.engine.BotResponse;
 import newsbot.engine.DialogueService;
 import newsbot.repository.UserProfileRepository;
@@ -7,8 +8,9 @@ import newsbot.shared.UserId;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
@@ -31,7 +33,6 @@ public class TelegramAdapter implements LongPollingSingleThreadUpdateConsumer{
 
     @Override
     public void consume(Update update) {
-        System.out.println("i was here");
         String command = "";
         long chatID;
 
@@ -46,8 +47,6 @@ public class TelegramAdapter implements LongPollingSingleThreadUpdateConsumer{
 
         String currentUser = String.valueOf(chatID);
 
-        System.out.println(chatID); // это потом убрать
-        System.out.println(command); // это потом убрать
         BotResponse response = dialog.handle(currentUser, command);
 
         sendMessage(chatID, response.getMessage());
@@ -64,16 +63,47 @@ public class TelegramAdapter implements LongPollingSingleThreadUpdateConsumer{
 
     private void sendMessage(long chatID, String text) {
         UserId userId = new UserId(String.valueOf(chatID));
-        SendMessage message = SendMessage.builder()
-                .chatId(chatID)
-                .text(text)
-                .replyMarkup(generalResponseButtons.getMessageWithGeneralButtons(userProfileRepo.getCategories(userId)))
-                .disableWebPagePreview(true)
-                .build();
+
+        String imgTagStart = "<image>";
+        String imgTagEnd = "</image>";
+
+        String imageUrl = null;
+        String caption = text;
+
+        var replyMarkup = generalResponseButtons.getMessageWithGeneralButtons(
+                userProfileRepo.getCategories(userId));
+
+        int startIdx = text.indexOf(imgTagStart);
+        if (startIdx != -1) {
+            int endIdx = text.indexOf(imgTagEnd, startIdx + imgTagStart.length());
+            if (endIdx != -1) {
+                imageUrl = text.substring(startIdx + imgTagStart.length(), endIdx).trim();
+                caption = (text.substring(0, startIdx) + text.substring(endIdx + imgTagEnd.length())).trim();
+            }
+        }
+
         try {
-            telegramClient.execute(message);
+            if (imageUrl != null && !imageUrl.isBlank()) {
+                SendPhoto photo = SendPhoto.builder()
+                        .parseMode("HTML")
+                        .chatId(chatID)
+                        .caption(caption)
+                        .replyMarkup(replyMarkup)
+                        .photo(new InputFile(imageUrl))
+                        .build();
+                telegramClient.execute(photo);
+            } else {
+                SendMessage message = SendMessage.builder()
+                        .parseMode("HTML")
+                        .chatId(chatID)
+                        .text(text)
+                        .replyMarkup(replyMarkup)
+                        .build();
+                telegramClient.execute(message);
+            }
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
+
     }
 }
