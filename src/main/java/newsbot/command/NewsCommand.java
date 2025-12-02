@@ -1,16 +1,21 @@
 package newsbot.command;
 
+import newsbot.command.resolver.FormatResolver;
 import newsbot.engine.BotResponse;
-import newsbot.news.NewsPreferenceService;
+import newsbot.news.NewsStory;
+import newsbot.news.StoryContentBuilder;
 import newsbot.shared.UserId;
-import java.util.Objects;
+import newsbot.news.NewsFeedGenerator;
+import java.util.List;
 
-public class NewsCommand implements  BotCommand {
+public class NewsCommand implements BotCommand {
 
-    private final NewsPreferenceService newsPrefs;
+    private final NewsFeedGenerator feedGenerator;
+    private final FormatResolver format;
 
-    public NewsCommand(NewsPreferenceService newsPrefs) {
-        this.newsPrefs = Objects.requireNonNull(newsPrefs);
+    public NewsCommand(NewsFeedGenerator feedGenerator, FormatResolver format) {
+        this.feedGenerator = feedGenerator;
+        this.format = format;
     }
 
     @Override
@@ -23,20 +28,12 @@ public class NewsCommand implements  BotCommand {
     public BotResponse execute(UserId userId, String args) {
         String[] parts = args.trim().split("\\s+");
 
-        if (parts.length == 0 || parts[0].isBlank() || "list".equalsIgnoreCase(parts[0])) {
-            return BotResponse.say("Ваши категории: " + newsPrefs.list(userId));
+        if (parts.length == 0 || parts[0].isBlank() || "get".equalsIgnoreCase(parts[0])) {
+            List<NewsStory> newStories = feedGenerator.getOneStory(userId);
+            return BotResponse.say(StoryContentBuilder.getStory(newStories, format));
         }
 
-        if ("add".equalsIgnoreCase(parts[0]) && parts.length >= 2) {
-            newsPrefs.add(userId, parts[1]);
-            return BotResponse.say("Добавил категорию: " + parts[1]);
-        }
-
-        if ("del".equalsIgnoreCase(parts[0]) && parts.length >= 2) {
-            newsPrefs.remove(userId, parts[1]);
-            return BotResponse.say("Удалил категорию: " + parts[1]);
-        }
-
-        return BotResponse.say("Использование: \\news list | \\news add <категория> | \\news del <категория>");
+        // Сообщение об ошибке стало проще
+        return BotResponse.say("Использование: \\news [get]");
     }
 }

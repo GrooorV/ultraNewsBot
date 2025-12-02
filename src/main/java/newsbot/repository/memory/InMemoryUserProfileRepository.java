@@ -11,6 +11,12 @@ public class InMemoryUserProfileRepository implements UserProfileRepository {
     private final ConcurrentHashMap<String, Set<NewsCategory>> categories = new ConcurrentHashMap<>();
 
     @Override
+    public boolean categoriesAreEmpty(UserId userId) {
+        Set<NewsCategory> categoriesSet = categories.get(userId.getValue());
+        return categoriesSet == null || categoriesSet.isEmpty();
+    }
+
+    @Override
     public Set<NewsCategory> getCategories(UserId userId) {
         Set<NewsCategory> set = categories.get(userId.getValue());
         return (set == null) ? Set.of() : Set.copyOf(set);

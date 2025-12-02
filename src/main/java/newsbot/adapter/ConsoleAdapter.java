@@ -1,4 +1,4 @@
-package newsbot.console;
+package newsbot.adapter;
 
 import newsbot.engine.BotResponse;
 import newsbot.engine.DialogueService;
@@ -19,14 +19,7 @@ public class ConsoleAdapter {
         System.out.println("""
         Привет! Я новостной бот.
         
-        Как пользоваться:
-        - Укажи активного пользователя: \\changeuser ИМЯ
-        
-        Доступные команды:
-           - \\help — показать эту справку
-           - \\available — список доступных категорий
-           - \\news list | add <категория> | del <категория> — управлять предпочтениями
-           Можно просто перечислить категории через запятую, и я их запомню.
+        Введите \\help для получения списка команд.
         """);
         }
 

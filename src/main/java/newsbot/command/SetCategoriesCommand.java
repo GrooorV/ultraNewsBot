@@ -1,7 +1,9 @@
 package newsbot.command;
 
 import newsbot.engine.BotResponse;
+import newsbot.engine.UserSession;
 import newsbot.news.NewsPreferenceService;
+import newsbot.repository.SessionRepository;
 import newsbot.shared.UserId;
 import java.util.Arrays;
 import java.util.Objects;
@@ -9,19 +11,21 @@ import java.util.Objects;
 public class SetCategoriesCommand implements BotCommand {
 
     private final NewsPreferenceService newsPrefs;
+    private final SessionRepository sessionRepository;
 
-    public SetCategoriesCommand(NewsPreferenceService newsPrefs) {
+    public SetCategoriesCommand(NewsPreferenceService newsPrefs, SessionRepository sessionRepository) {
         this.newsPrefs = Objects.requireNonNull(newsPrefs);
+        this.sessionRepository = Objects.requireNonNull(sessionRepository);
     }
 
     @Override
     public String getName() {
-        return "";
+        return "\\default";
     }
 
     @Override
     public BotResponse execute(UserId userId, String args) {
-        String[] cats = Arrays.stream(args.split("[,;]"))
+        String[] cats = Arrays.stream(args.split("[\s,;]"))
                 .map(String::trim)
                 .filter(s -> !s.isBlank())
                 .toArray(String[]::new);
@@ -34,10 +38,14 @@ public class SetCategoriesCommand implements BotCommand {
             newsPrefs.add(userId, c);
         }
 
+        UserSession session = sessionRepository.getOrCreate(userId);
+        session.clearPendingNews();
+        sessionRepository.save(userId, session);
+
         return BotResponse.say(
                 "Запомнил категории: " + String.join(", ", cats) +
                         ". Ваши категории сейчас: " + newsPrefs.list(userId) +
-                        ". Можете добавить ещё или используйте \\news list."
+                        ". Можете добавить ещё или используйте \\news get."
         );
     }
 }

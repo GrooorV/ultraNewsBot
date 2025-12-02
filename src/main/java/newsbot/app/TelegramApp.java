@@ -1,7 +1,11 @@
 package newsbot.app;
 
-import newsbot.adapter.ConsoleAdapter;
 import newsbot.command.resolver.FormatResolver;
+import newsbot.ui.GeneralResponseButtons;
+import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import newsbot.adapter.TelegramAdapter;
+
 import newsbot.engine.DialogueService;
 import newsbot.engine.DialogueEngine;
 import newsbot.network.DataFetcher;
@@ -18,9 +22,8 @@ import newsbot.repository.memory.InMemoryUserProfileRepository;
 import newsbot.command.*;
 import newsbot.command.resolver.CommandResolver;
 
-
-public class ConsoleApp {
-    public static void run() {
+public class TelegramApp {
+    public static void run(String BOT_TOKEN) throws TelegramApiException {
         DataFetcher fetcher = new HttpDataFetcher();
         LentaRssParser  parser = new LentaRssParser(fetcher);
 
@@ -37,11 +40,9 @@ public class ConsoleApp {
 
         BotCommand helpCommand = new HelpCommand();
         BotCommand availableCommand = new AvailableCommand(newsPrefs);
-        BotCommand newsCommand = new NewsCommand(feedGenerator, new FormatResolver(FormatResolver.OutputMode.CONSOLE));
+        BotCommand newsCommand = new NewsCommand(feedGenerator, new FormatResolver(FormatResolver.OutputMode.TELEGRAM));
         BotCommand categoryCommand = new CategoryCommand(newsPrefs, sessionRepo);
         BotCommand setCategoriesCommand = new SetCategoriesCommand(newsPrefs, sessionRepo);
-        BotCommand changeUserCommand = new ChangeProfileCommand();
-        BotCommand whoAmICommand = new WhoAmICommand();
 
         CommandResolver commandResolver = new CommandResolver(setCategoriesCommand);
 
@@ -49,12 +50,14 @@ public class ConsoleApp {
         commandResolver.register(availableCommand);
         commandResolver.register(newsCommand);
         commandResolver.register(categoryCommand);
-        commandResolver.register(changeUserCommand);
-        commandResolver.register(whoAmICommand);
 
         DialogueService dialogueService = new DialogueService(engine, sessionRepo, commandResolver);
-
-        ConsoleAdapter console = new ConsoleAdapter(dialogueService);
-        console.run();
+        GeneralResponseButtons generalResponseButtons = new GeneralResponseButtons();
+        TelegramAdapter telegramAdapter = new TelegramAdapter(BOT_TOKEN,
+                dialogueService,
+                generalResponseButtons,
+                userProfileRepo);
+        TelegramBotsLongPollingApplication app = new TelegramBotsLongPollingApplication();
+        app.registerBot(BOT_TOKEN, telegramAdapter);
     }
 }

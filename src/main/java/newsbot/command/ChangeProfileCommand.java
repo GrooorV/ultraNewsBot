@@ -1,6 +1,7 @@
 package newsbot.command;
 
 import newsbot.engine.BotResponse;
+import newsbot.repository.SessionRepository;
 import newsbot.shared.UserId;
 
 public class ChangeProfileCommand implements BotCommand {

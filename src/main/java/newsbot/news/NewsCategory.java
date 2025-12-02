@@ -8,7 +8,8 @@ public enum NewsCategory {
     ECONOMY("экономика"),
     TECHNOLOGY("технологии"),
     POLITICS("политика"),
-    CULTURE("культура");
+    CULTURE("культура"),
+    OTHER("другое");
 
 
     private final String name;
