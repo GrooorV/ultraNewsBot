@@ -1,15 +1,21 @@
 package newsbot.command;
 
+import newsbot.command.resolver.FormatResolver;
 import newsbot.engine.BotResponse;
+import newsbot.news.NewsStory;
+import newsbot.news.StoryContentBuilder;
 import newsbot.shared.UserId;
 import newsbot.news.NewsFeedGenerator;
+import java.util.List;
 
 public class NewsCommand implements BotCommand {
 
     private final NewsFeedGenerator feedGenerator;
+    private final FormatResolver format;
 
-    public NewsCommand(NewsFeedGenerator feedGenerator) {
+    public NewsCommand(NewsFeedGenerator feedGenerator, FormatResolver format) {
         this.feedGenerator = feedGenerator;
+        this.format = format;
     }
 
     @Override
@@ -23,7 +29,8 @@ public class NewsCommand implements BotCommand {
         String[] parts = args.trim().split("\\s+");
 
         if (parts.length == 0 || parts[0].isBlank() || "get".equalsIgnoreCase(parts[0])) {
-            return BotResponse.say(feedGenerator.getOneStory(userId));
+            List<NewsStory> newStories = feedGenerator.getOneStory(userId);
+            return BotResponse.say(StoryContentBuilder.getStory(newStories, format));
         }
 
         // Сообщение об ошибке стало проще

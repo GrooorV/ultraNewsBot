@@ -1,4 +1,4 @@
-package newsbot.console;
+package newsbot.adapter;
 
 import newsbot.engine.BotResponse;
 import newsbot.engine.DialogueService;

@@ -2,6 +2,7 @@ package newsbot.engine;
 
 import newsbot.command.*;
 import newsbot.command.resolver.CommandResolver;
+import newsbot.command.resolver.FormatResolver;
 import newsbot.news.*; // Импортируем FakeNewsProvider
 import newsbot.repository.NewsRepository;
 import newsbot.repository.SessionRepository;
@@ -38,7 +39,7 @@ class DialogueServiceTest {
         // 4. Команды (согласно ConsoleApp)
         BotCommand helpCommand = new HelpCommand();
         BotCommand availableCommand = new AvailableCommand(newsPrefs);
-        BotCommand newsCommand = new NewsCommand(feedGenerator); // "Глупая" команда
+        BotCommand newsCommand = new NewsCommand(feedGenerator, new FormatResolver(FormatResolver.OutputMode.CONSOLE)); // "Глупая" команда
         BotCommand categoryCommand = new CategoryCommand(newsPrefs, sessionRepo); // Новая команда
         BotCommand setCategoriesCommand = new SetCategoriesCommand(newsPrefs, sessionRepo);
         BotCommand changeUserCommand = new ChangeProfileCommand();
