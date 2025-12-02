@@ -49,19 +49,20 @@ public class TelegramAdapter implements LongPollingSingleThreadUpdateConsumer{
 
         BotResponse response = dialog.handle(currentUser, command);
 
-        sendMessage(chatID, response.getMessage());
+
+        sendMessage(chatID, response.getMessage(), command);
 
         response.getNewActiveUser().ifPresent(newUserId -> {
             if (!currentUser.equals(newUserId)) {
                 BotResponse welcome = dialog.handle(newUserId, "");
                 try {
-                    sendMessage(chatID, welcome.getMessage());
+                    sendMessage(chatID, welcome.getMessage(), "");
                 } catch (Exception ignored) {}
             }
         });
     }
 
-    private void sendMessage(long chatID, String text) {
+    private void sendMessage(long chatID, String text, String command) {
         UserId userId = new UserId(String.valueOf(chatID));
 
         String imgTagStart = "<image>";
@@ -70,8 +71,7 @@ public class TelegramAdapter implements LongPollingSingleThreadUpdateConsumer{
         String imageUrl = null;
         String caption = text;
 
-        var replyMarkup = generalResponseButtons.getMessageWithGeneralButtons(
-                userProfileRepo.getCategories(userId));
+        var replyMarkup = generalResponseButtons.getButtons(userProfileRepo.getCategories(userId), command);
 
         int startIdx = text.indexOf(imgTagStart);
         if (startIdx != -1) {

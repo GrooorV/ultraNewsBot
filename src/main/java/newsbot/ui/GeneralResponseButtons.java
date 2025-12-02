@@ -30,9 +30,10 @@ public class GeneralResponseButtons {
                 categoryName = "Технологии";
                 break;
             case OTHER:
-                categoryName = "Прочее";
+                categoryName = "Другое";
                 break;
         }
+
 
         String text = isSelected ? categoryName + " ✅" : categoryName + " ❌";
         String callbackData = isSelected ? "\\category del " + categoryName : "\\category add " + categoryName;
@@ -43,17 +44,48 @@ public class GeneralResponseButtons {
                 .build();
     }
 
-    public InlineKeyboardMarkup getMessageWithGeneralButtons(Set<NewsCategory> CategorySet) {
-        // создаем кнопки
+
+    public InlineKeyboardMarkup getButtons(Set<NewsCategory> CategorySet, String command) {
+        if (command.contains("available") || command.contains("category add") || command.contains("category del"))
+            return getCategoryButtons(CategorySet);
+        else {
+            return getGeneralButtons();
+        }
+    }
+
+    public InlineKeyboardMarkup getGeneralButtons() {
         InlineKeyboardButton button1 = InlineKeyboardButton.builder()
                 .text("Получить новости")
                 .callbackData("\\news get")
                 .build();
 
-        //InlineKeyboardButton button2 = InlineKeyboardButton.builder() - пока без помощи
-                //.text("Помощь")
-                //.callbackData("\\help")
-                //.build();
+        InlineKeyboardButton button2 = InlineKeyboardButton.builder()
+                .text("Настроить категории")
+                .callbackData("\\available")
+                .build();
+
+        InlineKeyboardRow row1 = new InlineKeyboardRow();
+        row1.add(button1);
+
+        InlineKeyboardRow row2 = new InlineKeyboardRow();
+        row2.add(button2);
+
+        List<InlineKeyboardRow> rows = new ArrayList<>();
+        rows.add(row1);
+        rows.add(row2);
+
+        return InlineKeyboardMarkup.builder()
+                .keyboard(rows)
+                .build();
+
+    }
+
+    public InlineKeyboardMarkup getCategoryButtons(Set<NewsCategory> CategorySet) {
+        // создаем кнопки
+        InlineKeyboardButton button1 = InlineKeyboardButton.builder()
+                .text("Назад")
+                .callbackData("\\category list")
+                .build();
 
         InlineKeyboardButton button3 = createCategoryButton(NewsCategory.POLITICS, CategorySet);
         InlineKeyboardButton button4 = createCategoryButton(NewsCategory.SPORT, CategorySet);
@@ -62,10 +94,8 @@ public class GeneralResponseButtons {
         InlineKeyboardButton button7 = createCategoryButton(NewsCategory.TECHNOLOGY, CategorySet);
         InlineKeyboardButton button8 = createCategoryButton(NewsCategory.OTHER, CategorySet);
 
-        // строка для кнопок
         InlineKeyboardRow row1 = new InlineKeyboardRow();
         row1.add(button1);
-        //row1.add(button2); - пока без помощи
 
         InlineKeyboardRow row2 = new InlineKeyboardRow();
         row2.add(button3);
