@@ -59,4 +59,21 @@ public class UserSession {
 
         return pendingNewsLinks.subList(from, to);
     }
+
+
+    public List<String> getPendingNewsLinks() {
+        return new ArrayList<>(this.pendingNewsLinks);
+    }
+
+    public int getPendingNewsIndex() {
+        return this.pendingNewsIndex;
+    }
+
+    public void setPendingNewsLinks(List<String> links) {
+        this.pendingNewsLinks = (links == null) ? new ArrayList<>() : new ArrayList<>(links);
+    }
+
+    public void setPendingNewsIndex(int index) {
+        this.pendingNewsIndex = index;
+    }
 }
