@@ -5,7 +5,6 @@ import java.util.Scanner;
 public class Main {
     public static void main(String [] args) throws Exception {
         Scanner scanner = new Scanner(System.in);
-
         System.out.println("Выберите какую версию бота запускать: ");
         System.out.println("1.ConsoleApp\n2.TelegramApp");
         while (true) {
