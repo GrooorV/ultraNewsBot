@@ -6,11 +6,6 @@ import java.sql.SQLException;
 
 public class DatabaseInitializer {
 
-    private PostgresConnection connection;
-
-    public DatabaseInitializer(PostgresConnection connection) { this.connection = connection; }
-
-
     public void init() {
         createUsersCategoriesTable();
         createSessionTable();
@@ -19,10 +14,10 @@ public class DatabaseInitializer {
 
     private void createUsersCategoriesTable() {
         String sql = """
-                CREATE TABLE IF NOT EXISTS user_categories (
-                   UserId VARCHAR(50),
-                   Category VARCHAR(50),
-                   PRIMARY KEY (UserId, Category)
+                CREATE TABLE IF NOT EXISTS users_categories (
+                   user_id VARCHAR(50),
+                   category VARCHAR(50),
+                   PRIMARY KEY (user_id, category)
                 );
                 """;
         execute(sql);
@@ -34,11 +29,11 @@ public class DatabaseInitializer {
                 CREATE TABLE IF NOT EXISTS news_cache (
                     link VARCHAR(300) PRIMARY KEY,
                     title TEXT NOT NULL,
-                    pub_date VARCHAR(100),
+                    date VARCHAR(100),
                     author VARCHAR(200),
                     category VARCHAR(50),
                     description TEXT,
-                    picture_link VARCHAR(500),
+                    pictureLink VARCHAR(500),
                     fetched_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 );
                 """;
