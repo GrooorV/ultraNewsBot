@@ -17,10 +17,10 @@ import java.util.stream.Collectors;
 
 public class DatabaseNewsRepository implements NewsRepository {
 
-    String insertSQL = "INSERT INTO news_table (link, title, date, author, category, description, pictureLink) " +
+    String insertSQL = "INSERT INTO news_cache (link, title, date, author, category, description, pictureLink) " +
             "VALUES (?, ?, ?, ?, ?, ?, ?);";
 
-    String clearTableSQL = "TRUNCATE TABLE news_table";
+    String clearTableSQL = "TRUNCATE TABLE news_cache";
 
     private final NewsProvider provider;
     private final Duration cacheDuration;
@@ -91,13 +91,16 @@ public class DatabaseNewsRepository implements NewsRepository {
 
     @Override
     public List<NewsStory> getNewsByCategory(Set<NewsCategory> categories, Instant since) {
+
+        refreshCacheIfNeeded();
+
         List<NewsStory> result = new ArrayList<>();
         String placeholders = categories.stream()
                 .map(cat -> "?")
                 .collect(Collectors.joining(", "));
 
         String sql = "SELECT link, title, date, author, category, description, pictureLink, fetched_at" +
-                " FROM news_table " +
+                " FROM news_cache " +
                 "WHERE category IN (" + placeholders + ") " +
                 "AND fetched_at > ?";
 
@@ -143,10 +146,13 @@ public class DatabaseNewsRepository implements NewsRepository {
 
     @Override
     public List<NewsStory> getNewsByLinks(List<String> links) {
+
+        refreshCacheIfNeeded();
+
         List<NewsStory> result = new ArrayList<>();
         String placeholders = String.join(",", Collections.nCopies(links.size(), "?"));
         String sql = "SELECT link, title, date, author, category, description, pictureLink, fetched_at " +
-                "FROM news_table " +
+                "FROM news_cache " +
                 "WHERE link IN (" + placeholders + ")";
         try (Connection conn = PostgresConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
