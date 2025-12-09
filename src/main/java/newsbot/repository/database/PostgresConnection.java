@@ -7,10 +7,15 @@ import java.sql.SQLException;
 public class PostgresConnection {
 
     public static Connection getConnection() throws SQLException {
-        String url = System.getenv("url");
-        String user = System.getenv("user");
-        String password = System.getenv("password");
+        String dbUrl = System.getenv("DB_URL");
+        String dbUser = System.getenv("DB_USER");
+        String dbPass = System.getenv("DB_PASSWORD");
 
-        return DriverManager.getConnection(url, user, password);
+        if (dbUrl == null) dbUrl = "jdbc:postgresql://localhost:5432/newsbot_db";
+        if (dbUser == null) dbUser = "postgres";
+        if (dbPass == null) dbPass = "12345";
+
+
+        return DriverManager.getConnection(dbUrl, dbUser, dbPass);
     }
 }
