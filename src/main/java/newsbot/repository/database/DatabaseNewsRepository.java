@@ -18,7 +18,8 @@ import java.util.stream.Collectors;
 public class DatabaseNewsRepository implements NewsRepository {
 
     String insertSQL = "INSERT INTO news_cache (link, title, date, author, category, description, pictureLink) " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?);";
+            "VALUES (?, ?, ?, ?, ?, ?, ?) " +
+            "ON CONFLICT (link) DO NOTHING;";
 
     String clearTableSQL = "TRUNCATE TABLE news_cache";
 
@@ -92,6 +93,8 @@ public class DatabaseNewsRepository implements NewsRepository {
     @Override
     public List<NewsStory> getNewsByCategory(Set<NewsCategory> categories, Instant since) {
 
+        refreshCacheIfNeeded();
+
         List<NewsStory> result = new ArrayList<>();
         String placeholders = categories.stream()
                 .map(cat -> "?")
@@ -144,8 +147,6 @@ public class DatabaseNewsRepository implements NewsRepository {
 
     @Override
     public List<NewsStory> getNewsByLinks(List<String> links) {
-
-        refreshCacheIfNeeded();
 
         List<NewsStory> result = new ArrayList<>();
         String placeholders = String.join(",", Collections.nCopies(links.size(), "?"));
