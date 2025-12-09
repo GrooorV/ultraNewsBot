@@ -44,7 +44,7 @@
 
         @Override
         public void addCategory(UserId userId, NewsCategory newsCategory) {
-            String sql = "INSERT INTO users_categories (user_id, category) values (?, ?)" +
+            String sql = "INSERT INTO users_categories (user_id, category) values (?, ?) " +
                     "ON CONFLICT (user_id, category) DO NOTHING";
 
             try (Connection conn = PostgresConnection.getConnection();
