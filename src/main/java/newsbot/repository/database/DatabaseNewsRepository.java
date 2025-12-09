@@ -92,8 +92,6 @@ public class DatabaseNewsRepository implements NewsRepository {
     @Override
     public List<NewsStory> getNewsByCategory(Set<NewsCategory> categories, Instant since) {
 
-        refreshCacheIfNeeded();
-
         List<NewsStory> result = new ArrayList<>();
         String placeholders = categories.stream()
                 .map(cat -> "?")
@@ -180,11 +178,11 @@ public class DatabaseNewsRepository implements NewsRepository {
 
         }catch (SQLException e) {
             System.out.println("Возникла проблема в подключении к базе данных" +
-                    " или создании команды получения новостей для sql при получении по ссылкакм getNewsByCategory");
+                    " или создании команды получения новостей для sql при получении по ссылкакм getNewsByLinks");
             System.out.println(e.getMessage());
             e.printStackTrace();
         } catch (NullPointerException e) {
-            System.out.println("nullPointer в Connection conn для sql при получении по ссылкам getNewsByCategory");
+            System.out.println("nullPointer в Connection conn для sql при получении по ссылкам getNewsByLinks");
             System.out.println(e.getMessage());
             e.printStackTrace();
         }
