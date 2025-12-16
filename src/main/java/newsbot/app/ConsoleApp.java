@@ -10,6 +10,10 @@ import newsbot.news.*;
 import newsbot.repository.NewsRepository;
 import newsbot.repository.SessionRepository;
 import newsbot.repository.UserProfileRepository;
+import newsbot.repository.database.DatabaseInitializer;
+import newsbot.repository.database.DatabaseNewsRepository;
+import newsbot.repository.database.DatabaseSessionRepository;
+import newsbot.repository.database.DatabaseUserProfileRepository;
 import newsbot.repository.memory.InMemoryNewsRepository;
 import newsbot.repository.memory.InMemorySessionRepository;
 import newsbot.repository.memory.InMemoryUserProfileRepository;
@@ -26,9 +30,12 @@ public class ConsoleApp {
 
         NewsProvider newsProvider = new LentaNewsProvider(fetcher, parser);
 
-        UserProfileRepository userProfileRepo = new InMemoryUserProfileRepository();
-        SessionRepository sessionRepo = new InMemorySessionRepository();
-        NewsRepository newsRepo = new InMemoryNewsRepository(newsProvider);
+        DatabaseInitializer dbInitializer = new DatabaseInitializer();
+        dbInitializer.init();
+
+        UserProfileRepository userProfileRepo = new DatabaseUserProfileRepository();
+        SessionRepository sessionRepo = new DatabaseSessionRepository();
+        NewsRepository newsRepo = new DatabaseNewsRepository(newsProvider);
 
         NewsFeedGenerator feedGenerator = new NewsFeedGenerator(userProfileRepo, sessionRepo, newsRepo);
 
