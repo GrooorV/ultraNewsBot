@@ -35,6 +35,7 @@ dependencies {
     implementation 'org.telegram:telegrambots-longpolling:9.2.0'
     implementation 'org.telegram:telegrambots-client:9.2.0'
     implementation 'org.slf4j:slf4j-simple:2.0.12'
+    implementation 'org.postgresql:postgresql:42.7.8'
 }
 
 test {
